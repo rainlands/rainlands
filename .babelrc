@@ -1,0 +1,16 @@
+{
+  "presets": ["stage-2"],
+  "plugins": [
+    "transform-class-properties",
+    "transform-export-extensions",
+    ["module-resolver", {
+      "alias": {
+        "@core": "./game/core",
+        "@resources": "./game/resources",
+        "@utils": "./game/utils",
+        "!constants": "./game/constants.js",
+        "@root": "./game"
+      }
+    }]
+  ]
+}

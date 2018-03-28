@@ -1,0 +1,42 @@
+{
+  "name": "game-engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html -p 8080 --no-hmr",
+    "lint": "npx eslint src -- --fix; exit 0",
+    "git:add": "git add .",
+    "deploy": "parcel build index.html --public-url '.' && firebase deploy"
+  },
+  "pre-commit": [
+    "lint",
+    "git:add"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cannon": "^0.6.2",
+    "lodash": "^4.17.5",
+    "noisejs": "^2.1.0",
+    "normalize-to-range": "^2.0.0",
+    "pointer-lock": "0.0.4",
+    "stats-js": "^1.0.0-alpha1",
+    "taira": "^3.2.0",
+    "three": "^0.90.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-plugin-module-resolver": "^3.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.19.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "pre-commit": "^1.2.2"
+  }
+}
