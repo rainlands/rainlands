@@ -1,0 +1,11 @@
+{
+  "name": "terrain-generator",
+  "version": "3.0.0",
+  "description": "Procedural chunked terrain generation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "rainlands",
+  "license": "MIT"
+}
