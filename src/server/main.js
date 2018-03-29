@@ -2,11 +2,18 @@ import { app, BrowserWindow } from 'electron'; // eslint-disable-line
 import path from 'path';
 import url from 'url';
 
-export const initElectron = () => { // eslint-disable-line
+export const initElectron = () => {
+  // eslint-disable-line
   let mainWindow;
 
   const createWindow = () => {
-    mainWindow = new BrowserWindow({ width: 800, height: 600 });
+    mainWindow = new BrowserWindow({
+      width: 800,
+      height: 600,
+      webPreferences: {
+        nodeIntegrationInWorker: true,
+      },
+    });
 
     mainWindow.loadURL(url.format({
       pathname: path.resolve(__dirname, '../../build/index.html'), // XXX
