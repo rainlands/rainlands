@@ -1,3 +1,5 @@
+import TerrainGenerator from '@packages/terrain-generator';
+
 import { createCamera } from './core/camera';
 import { createRenderer } from './core/renderer';
 import { createScene } from './core/scene';
@@ -23,5 +25,7 @@ export default class Client {
         axes: 5,
       },
     });
+
+    this.generator = new TerrainGenerator();
   }
 }

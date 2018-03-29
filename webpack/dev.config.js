@@ -1,6 +1,5 @@
 const path = require('path');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const config = require('../config');
+const commonConfig = require('./common.config');
 
 const clientConfig = {
   entry: path.resolve(__dirname, '../src/client'),
@@ -9,13 +8,7 @@ const clientConfig = {
     path: path.resolve(__dirname, '../build'),
   },
   target: 'electron-renderer',
-  plugins: [
-    new HTMLWebpackPlugin({
-      title: config.title,
-      template: path.resolve(__dirname, '../src/index.html'),
-      filename: path.resolve(__dirname, '../build/index.html'),
-    }),
-  ],
+  ...commonConfig,
 };
 
 const serverConfig = {
@@ -25,10 +18,7 @@ const serverConfig = {
     path: path.resolve(__dirname, '../build'),
   },
   target: 'electron-main',
-  node: {
-    __filename: true,
-    __dirname: true,
-  },
+  ...commonConfig,
 };
 
 module.exports = [clientConfig, serverConfig];
