@@ -5,6 +5,7 @@ import { createScene } from './core/scene';
 export default class Client {
   constructor({ container }) {
     this.renderer = createRenderer({ container });
+
     this.camera = createCamera({
       container,
       fow: 45,
@@ -12,6 +13,7 @@ export default class Client {
       far: 300,
       position: [0, 0, 0],
     });
+
     this.scene = createScene({
       fog: {
         near: 0,
