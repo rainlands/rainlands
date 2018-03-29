@@ -1,0 +1,7 @@
+{
+  "lerna": "2.9.0",
+  "packages": [
+    "src/packages/*"
+  ],
+  "version": "0.0.0"
+}

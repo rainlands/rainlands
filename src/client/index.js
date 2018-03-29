@@ -1,1 +1,1 @@
-document.write('lol')
+document.write('lol');

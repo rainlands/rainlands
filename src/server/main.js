@@ -1,11 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron'; // eslint-disable-line
 import path from 'path';
 import url from 'url';
 
-export const initElectron = () => {
+export const initElectron = () => { // eslint-disable-line
   let mainWindow;
-
-  console.log(__dirname);
 
   const createWindow = () => {
     mainWindow = new BrowserWindow({ width: 800, height: 600 });

@@ -2,11 +2,10 @@
   "extends": "airbnb-base",
   "parser": "babel-eslint",
   "env": {
-    "browser": true
+    "browser": true,
+    "node": true
   },
-  "plugins": [
-    "prettier"
-  ],
+  "plugins": ["prettier"],
   "rules": {
     "no-underscore-dangle": 0
   }
