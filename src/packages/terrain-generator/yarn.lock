@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+noisejs@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/noisejs/-/noisejs-2.1.0.tgz#84b4c4cd04ff43367034f65253e213e0d9fe1aff"
+
 workly@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/workly/-/workly-1.0.1.tgz#ade6d9b8b937c2721ab9bd1b2c93c78131b62dee"

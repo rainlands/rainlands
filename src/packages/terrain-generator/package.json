@@ -9,6 +9,7 @@
   "author": "rainlands",
   "license": "MIT",
   "dependencies": {
+    "noisejs": "^2.1.0",
     "workly": "^1.0.1"
   }
 }

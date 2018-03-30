@@ -27,5 +27,11 @@ export default class Client {
     });
 
     this.generator = new TerrainGenerator();
+
+    this.generator.update({
+      position: [0, 0],
+      renderDistance: 1,
+      unrenderOffset: 0,
+    });
   }
 }
