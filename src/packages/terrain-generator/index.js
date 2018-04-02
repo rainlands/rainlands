@@ -29,7 +29,7 @@ export default class TerrainGenerator {
     });
   }
 
-  async _updateChunks({
+  _addChunks({
     chunkedPosition,
     renderDistance,
     unrenderOffset,
@@ -47,7 +47,6 @@ export default class TerrainGenerator {
     const added = {};
 
     for (let x = xStartPos; x < xEndPos; x++) {
-
       for (let z = zStartPos; z < zEndPos; z++) {
         if (!this.chunks[x]) this.chunks[x] = {};
 
@@ -69,10 +68,56 @@ export default class TerrainGenerator {
       }
     }
 
-    if (Object.keys(added).length > 0) {
-      this.callOnUpdate({ added });
-    }
+    return added;
+  }
 
+  _removeChunks({
+    chunkedPosition,
+    renderDistance,
+    unrenderOffset,
+  }) {
+    const removed = {};
+    const [xChunkPos, zChunkPos] = chunkedPosition;
+
+    const [xStartPos, zStartPos] = chunkedPosition.map(
+      chunkPos => chunkPos - (renderDistance + 1),
+    );
+
+    const [xEndPos, zEndPos] = chunkedPosition.map(
+      chunkPos => chunkPos + renderDistance,
+    );
+
+    Object.keys(this.chunks).forEach(x => {
+      Object.keys(this.chunks[x]).forEach(z => {
+        if (
+          +z < zStartPos ||
+          +z > zEndPos ||
+          (+x < xStartPos || +x > xEndPos)
+        ) {
+          if (!removed[x]) removed[x] = {};
+          removed[x][z] = { ...this.chunks[x][z] };
+
+          delete this.chunks[x][z];
+          if (Object.keys(this.chunks[x]).length === 0) {
+            delete this.chunks[x];
+          }
+        }
+      });
+    });
+
+    return removed;
+  }
+
+  _updateChunks(params) {
+    const added = this._addChunks(params);
+    const removed = this._removeChunks(params);
+
+    if (
+      Object.keys(added).length > 0 ||
+      Object.keys(removed).length > 0
+    ) {
+      this.callOnUpdate({ added, removed });
+    }
   }
 
   callOnUpdate(data) {

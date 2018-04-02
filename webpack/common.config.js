@@ -30,9 +30,18 @@ module.exports = {
   plugins: [
     new HTMLWebpackPlugin({
       title: appConfig.title,
-      template: path.resolve(__dirname, '../src/index.html'),
-      filename: path.resolve(__dirname, '../build/index.html'),
+      template: path.resolve(
+        __dirname,
+        '../src/index.html',
+      ),
+      filename: path.resolve(
+        __dirname,
+        '../build/index.html',
+      ),
     }),
-    new CleanWebpackPlugin([path.resolve(__dirname, '../build')], { allowExternal: true }),
+    new CleanWebpackPlugin(
+      [path.resolve(__dirname, '../build')],
+      { allowExternal: true },
+    ),
   ],
 };

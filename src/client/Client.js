@@ -48,7 +48,7 @@ export default class Client {
   }
 
   animate = () => {
-    requestAnimationFrame(this.animate)
+    requestAnimationFrame(this.animate);
 
     const { x, z } = this.camera.position;
 
@@ -58,13 +58,11 @@ export default class Client {
       unrenderOffset: 0,
     });
 
-    // this.camera.position.x += 0.2;
-    // this.camera.position.z += 0.2;
-  }
+    this.camera.position.x += 0.2;
+    this.camera.position.z += 0.2;
+  };
 
   updateMap({ added, removed }) {
-    console.log(added);
-
     // TODO: Render new chunks and clear removed
   }
 }
