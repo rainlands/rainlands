@@ -1,9 +1,8 @@
-import { app, BrowserWindow } from 'electron'; // eslint-disable-line
+import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import url from 'url';
 
 export const initElectron = () => {
-  // eslint-disable-line
   let mainWindow;
 
   const createWindow = () => {
@@ -16,10 +15,7 @@ export const initElectron = () => {
     });
 
     mainWindow.loadURL(url.format({
-      pathname: path.resolve(
-        __dirname,
-        '../../build/index.html',
-      ), // XXX
+      pathname: path.resolve(__dirname, '../../build/index.html'), // XXX
       protocol: 'file:',
       slashes: true,
     }));

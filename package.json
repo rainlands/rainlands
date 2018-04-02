@@ -7,8 +7,12 @@
     "start": "npx electron build/server.js",
     "watch": "npx webpack --mode development --config webpack/dev.config.js --watch",
     "build": "npx webpack --mode production --config webpack/prod.config.js",
-    "lint": "npx eslint src --ignore-path .gitignore",
+    "lint": "npx prettier-eslint \"src/**/*.js\" --ignore .gitignore --write",
+    "precommit": "lint-staged",
     "deploy": "yarn build && firebase deploy"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": ["yarn lint", "git add"]
   },
   "keywords": [],
   "author": "",
@@ -32,7 +36,10 @@
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.0",
     "html-webpack-plugin": "^3.1.0",
+    "husky": "^0.14.3",
     "lerna": "^2.9.0",
+    "lint-staged": "^7.0.2",
+    "prettier-eslint-cli": "^4.7.1",
     "webpack": "^4.3.0",
     "webpack-cli": "^2.0.13",
     "worker-loader": "^1.1.1"
