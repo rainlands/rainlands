@@ -16,7 +16,10 @@ export const initElectron = () => {
     });
 
     mainWindow.loadURL(url.format({
-      pathname: path.resolve(__dirname, '../../build/index.html'), // XXX
+      pathname: path.resolve(
+        __dirname,
+        '../../build/index.html',
+      ), // XXX
       protocol: 'file:',
       slashes: true,
     }));

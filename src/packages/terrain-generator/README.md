@@ -28,7 +28,7 @@ const generator = new TerrainGenerator({
 });
 
 // provide callback for map updates
-generator.onUpdate(({ chunks, added, removed }) => {
+generator.onUpdate(({ added, removed }) => {
   // do something with map, e.g. render
 });
 
@@ -36,6 +36,8 @@ generator.onUpdate(({ chunks, added, removed }) => {
 
 generator.update({
   position: [0, 0], // position in 2D world
+  renderDistance: 2,
+  unrenderOffset: 1,
 });
 ```
 
