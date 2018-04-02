@@ -106,7 +106,9 @@ export default class TerrainGenerator {
   }
 
   update({ position, renderDistance, unrenderOffset }) {
-    const chunkedPosition = position.map((v) => {
+    const { x, z } = position;
+
+    const chunkedPosition = [x, z].map((v) => {
       let c = Math.ceil((v + this.chunkSize / 2) / this.chunkSize);
 
       if (Object.is(c, -0)) c = 0;
