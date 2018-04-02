@@ -26,12 +26,45 @@ export default class Client {
       },
     });
 
-    this.generator = new TerrainGenerator();
+    this.generator = new TerrainGenerator({
+      seed: 1,
+      depth: 1,
+      chunkSize: 16,
+      caves: {
+        frequency: 5,
+        redistribution: 100,
+      },
+      surface: {
+        frequency: 100,
+        redistribution: 3,
+        minHeight: 25,
+        maxHeight: 75,
+      },
+    });
+
+    this.generator.onUpdate(({ added, removed }) => {
+      this.updateMap({ added, removed });
+    });
+  }
+
+  animate = () => {
+    requestAnimationFrame(this.animate)
+
+    const { x, z } = this.camera.position;
 
     this.generator.update({
-      position: [0, 0],
+      position: [x, z],
       renderDistance: 1,
       unrenderOffset: 0,
     });
+
+    // this.camera.position.x += 0.2;
+    // this.camera.position.z += 0.2;
+  }
+
+  updateMap({ added, removed }) {
+    console.log(added);
+
+    // TODO: Render new chunks and clear removed
   }
 }
