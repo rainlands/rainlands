@@ -1,7 +1,8 @@
-import Client from './Client';
+import GameClient from './Client';
+import './ui';
 
-const client = new Client({
+const gameClient = new GameClient({
   container: document.querySelector('#game_root'),
 });
 
-client.animate();
+gameClient.animate();

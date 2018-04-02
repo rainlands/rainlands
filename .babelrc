@@ -1,5 +1,5 @@
 {
-  "presets": ["stage-2"],
+  "presets": ["stage-2", "react"],
   "plugins": [
     "transform-class-properties",
     "transform-export-extensions",
