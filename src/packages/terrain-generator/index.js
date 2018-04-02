@@ -80,11 +80,11 @@ export default class TerrainGenerator {
     const [xChunkPos, zChunkPos] = chunkedPosition;
 
     const [xStartPos, zStartPos] = chunkedPosition.map(
-      chunkPos => chunkPos - (renderDistance + 1),
+      chunkPos => chunkPos - (renderDistance + 1 + unrenderOffset),
     );
 
     const [xEndPos, zEndPos] = chunkedPosition.map(
-      chunkPos => chunkPos + renderDistance,
+      chunkPos => chunkPos + renderDistance + unrenderOffset,
     );
 
     Object.keys(this.chunks).forEach(x => {
