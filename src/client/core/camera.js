@@ -3,11 +3,7 @@ import * as THREE from 'three';
 const getAspect = e => e.offsetWidth / e.offsetHeight;
 
 export const createCamera = ({
-  container,
-  fov,
-  near,
-  far,
-  position,
+  container, fov, near, far, position,
 }) => {
   const camera = new THREE.PerspectiveCamera(fov, getAspect(container), near, far);
 

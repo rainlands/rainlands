@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import { Noise } from 'noisejs';
 import * as utils from './utils';
 
@@ -29,20 +27,12 @@ export default class TerrainGenerator {
     });
   }
 
-  _addChunks({
-    chunkedPosition,
-    renderDistance,
-    unrenderOffset,
-  }) {
+  _addChunks({ chunkedPosition, renderDistance, unrenderOffset }) {
     const [xChunkPos, zChunkPos] = chunkedPosition;
 
-    const [xStartPos, zStartPos] = chunkedPosition.map(
-      chunkPos => chunkPos - (renderDistance + 1),
-    );
+    const [xStartPos, zStartPos] = chunkedPosition.map(chunkPos => chunkPos - (renderDistance + 1));
 
-    const [xEndPos, zEndPos] = chunkedPosition.map(
-      chunkPos => chunkPos + renderDistance,
-    );
+    const [xEndPos, zEndPos] = chunkedPosition.map(chunkPos => chunkPos + renderDistance);
 
     const added = {};
 
@@ -71,29 +61,17 @@ export default class TerrainGenerator {
     return added;
   }
 
-  _removeChunks({
-    chunkedPosition,
-    renderDistance,
-    unrenderOffset,
-  }) {
+  _removeChunks({ chunkedPosition, renderDistance, unrenderOffset }) {
     const removed = {};
     const [xChunkPos, zChunkPos] = chunkedPosition;
 
-    const [xStartPos, zStartPos] = chunkedPosition.map(
-      chunkPos => chunkPos - (renderDistance + 1 + unrenderOffset),
-    );
+    const [xStartPos, zStartPos] = chunkedPosition.map(chunkPos => chunkPos - (renderDistance + 1 + unrenderOffset));
 
-    const [xEndPos, zEndPos] = chunkedPosition.map(
-      chunkPos => chunkPos + renderDistance + unrenderOffset,
-    );
+    const [xEndPos, zEndPos] = chunkedPosition.map(chunkPos => chunkPos + renderDistance + unrenderOffset);
 
-    Object.keys(this.chunks).forEach(x => {
-      Object.keys(this.chunks[x]).forEach(z => {
-        if (
-          +z < zStartPos ||
-          +z > zEndPos ||
-          (+x < xStartPos || +x > xEndPos)
-        ) {
+    Object.keys(this.chunks).forEach((x) => {
+      Object.keys(this.chunks[x]).forEach((z) => {
+        if (+z < zStartPos || +z > zEndPos || (+x < xStartPos || +x > xEndPos)) {
           if (!removed[x]) removed[x] = {};
           removed[x][z] = { ...this.chunks[x][z] };
 
@@ -112,10 +90,7 @@ export default class TerrainGenerator {
     const added = this._addChunks(params);
     const removed = this._removeChunks(params);
 
-    if (
-      Object.keys(added).length > 0 ||
-      Object.keys(removed).length > 0
-    ) {
+    if (Object.keys(added).length > 0 || Object.keys(removed).length > 0) {
       this.callOnUpdate({ added, removed });
     }
   }
@@ -131,10 +106,8 @@ export default class TerrainGenerator {
   }
 
   update({ position, renderDistance, unrenderOffset }) {
-    const chunkedPosition = position.map(v => {
-      let c = Math.ceil(
-        (v + this.chunkSize / 2) / this.chunkSize,
-      );
+    const chunkedPosition = position.map((v) => {
+      let c = Math.ceil((v + this.chunkSize / 2) / this.chunkSize);
 
       if (Object.is(c, -0)) c = 0;
 
