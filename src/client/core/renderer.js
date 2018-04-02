@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
-export const createRenderer = ({ container, clearColor }) => {
+export const createRenderer = ({ container, clearColor = '#212121' }) => {
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
-    // antialias: true,
+    antialias: true,
   });
 
   renderer.setClearColor(clearColor, 1);
@@ -13,6 +13,8 @@ export const createRenderer = ({ container, clearColor }) => {
   window.addEventListener('resize', () => {
     renderer.setSize(container.offsetWidth, container.offsetHeight);
   });
+
+  container.appendChild(renderer.domElement);
 
   return renderer;
 };

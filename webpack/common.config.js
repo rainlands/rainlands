@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
@@ -30,18 +31,12 @@ module.exports = {
   plugins: [
     new HTMLWebpackPlugin({
       title: appConfig.title,
-      template: path.resolve(
-        __dirname,
-        '../src/index.html',
-      ),
-      filename: path.resolve(
-        __dirname,
-        '../build/index.html',
-      ),
+      template: path.resolve(__dirname, '../src/index.html'),
+      filename: path.resolve(__dirname, '../build/index.html'),
     }),
-    new CleanWebpackPlugin(
-      [path.resolve(__dirname, '../build')],
-      { allowExternal: true },
-    ),
+    new CleanWebpackPlugin([path.resolve(__dirname, '../build')], { allowExternal: true }),
+    new webpack.DefinePlugin({
+      __REACT_DEVTOOLS_GLOBAL_HOOK__: '({ isDisabled: true })',
+    }),
   ],
 };
