@@ -1,22 +1,23 @@
-import Statsjs from 'stats-js';
+import Statsjs from 'stats-js'
+
 
 export default class Stats {
   constructor() {
-    const stats = new Statsjs();
+    const stats = new Statsjs()
 
-    stats.setMode(0);
+    stats.setMode(0)
 
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.right = '0px';
-    stats.domElement.style.top = '0px';
-    stats.domElement.style.zIndex = '5';
+    stats.domElement.style.position = 'absolute'
+    stats.domElement.style.right = '0px'
+    stats.domElement.style.top = '0px'
+    stats.domElement.style.zIndex = '5'
 
-    document.body.appendChild(stats.domElement);
+    document.body.appendChild(stats.domElement)
 
-    this.stats = stats;
+    this.stats = stats
   }
 
-  begin = () => this.stats.begin();
+  begin = () => this.stats.begin()
 
-  end = () => this.stats.end();
+  end = () => this.stats.end()
 }

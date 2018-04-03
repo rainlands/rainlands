@@ -1,3 +1,4 @@
-import { initElectron } from './main';
+import { initElectron } from './main'
 
-initElectron();
+
+initElectron()

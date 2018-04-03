@@ -1,18 +1,19 @@
-import * as THREE from 'three';
-import TerrainGenerator from '@packages/terrain-generator';
+import * as THREE from 'three'
+import TerrainGenerator from '@packages/terrain-generator'
 
-import { createCamera } from '@client/core/camera';
-import { createRenderer } from '@client/core/renderer';
-import { createScene } from '@client/core/scene';
+import { createCamera } from '@client/core/camera'
+import { createRenderer } from '@client/core/renderer'
+import { createScene } from '@client/core/scene'
 
-import * as controls from '@client/utils/controls';
-import Stats from '@client/utils/Stats';
+import * as controls from '@client/utils/controls'
+import Stats from '@client/utils/Stats'
+
 
 export default class Client {
   constructor({ container }) {
-    this.stats = new Stats();
+    this.stats = new Stats()
 
-    this.renderer = createRenderer({ container, clearColor: '#212121' });
+    this.renderer = createRenderer({ container, clearColor: '#212121' })
 
     this.camera = createCamera({
       container,
@@ -20,8 +21,8 @@ export default class Client {
       near: 0.3,
       far: 300,
       position: [1, 1, 5],
-    });
-    controls.initializeControls(this.camera);
+    })
+    controls.initializeControls(this.camera)
 
     this.scene = createScene({
       fog: {
@@ -31,7 +32,7 @@ export default class Client {
       helpers: {
         axes: 5,
       },
-    });
+    })
 
     this.generator = new TerrainGenerator({
       seed: 1,
@@ -47,33 +48,33 @@ export default class Client {
         minHeight: 25,
         maxHeight: 75,
       },
-    });
+    })
 
     this.generator.onUpdate(({ added, removed }) => {
-      this.updateMap({ added, removed });
-    });
+      this.updateMap({ added, removed })
+    })
   }
 
   animate = () => {
-    this.stats.begin();
+    this.stats.begin()
 
-    requestAnimationFrame(this.animate);
+    requestAnimationFrame(this.animate)
 
-    controls.animateMovementTick({ camera: this.camera, speed: 0.15 });
+    controls.animateMovementTick({ camera: this.camera, speed: 0.15 })
 
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.camera)
 
     this.generator.update({
       position: this.camera.position,
       renderDistance: 3,
       unrenderOffset: 0,
-    });
+    })
 
-    this.stats.end();
-  };
+    this.stats.end()
+  }
 
   updateMap({ added, removed }) {
-    console.log(added);
+    console.log(added)
     // TODO: Render new chunks and clear removed
   }
 }

@@ -1,5 +1,5 @@
-export const renderChunk = () => {};
+export const renderChunk = () => {}
 
-export const unrenderChunk = () => {};
+export const unrenderChunk = () => {}
 
-export const updateChunk = () => {};
+export const updateChunk = () => {}
