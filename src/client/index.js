@@ -1,5 +1,5 @@
 import GameClient from './Client'
-import './ui'
+import './interface'
 
 
 const gameClient = new GameClient({
