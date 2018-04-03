@@ -1,5 +1,6 @@
-const path = require('path');
-const commonConfig = require('./common.config');
+const path = require('path')
+const commonConfig = require('./common.config')
+
 
 const clientConfig = {
   entry: path.resolve(__dirname, '../src/client'),
@@ -9,7 +10,7 @@ const clientConfig = {
   },
   target: 'electron-renderer',
   ...commonConfig,
-};
+}
 
 const serverConfig = {
   entry: path.resolve(__dirname, '../src/server'),
@@ -19,6 +20,6 @@ const serverConfig = {
   },
   target: 'electron-main',
   ...commonConfig,
-};
+}
 
-module.exports = [clientConfig, serverConfig];
+module.exports = [clientConfig, serverConfig]

@@ -1,22 +1,21 @@
-import * as THREE from 'three';
+import * as THREE from 'three'
 
-const getAspect = e => e.offsetWidth / e.offsetHeight;
 
-export const createCamera = ({
-  container, fov, near, far, position,
-}) => {
-  const camera = new THREE.PerspectiveCamera(fov, getAspect(container), near, far);
+const getAspect = (e) => e.offsetWidth / e.offsetHeight
 
-  camera.rotation.order = 'YXZ'; // XXX: IMPORTANT
-  camera.position.set(...position);
+export const createCamera = ({ container, fov, near, far, position }) => {
+  const camera = new THREE.PerspectiveCamera(fov, getAspect(container), near, far)
 
-  camera.aspect = getAspect(container);
-  camera.updateProjectionMatrix();
+  camera.rotation.order = 'YXZ' // XXX: IMPORTANT
+  camera.position.set(...position)
+
+  camera.aspect = getAspect(container)
+  camera.updateProjectionMatrix()
 
   window.addEventListener('resize', () => {
-    camera.aspect = getAspect(container);
-    camera.updateProjectionMatrix();
-  });
+    camera.aspect = getAspect(container)
+    camera.updateProjectionMatrix()
+  })
 
-  return camera;
-};
+  return camera
+}

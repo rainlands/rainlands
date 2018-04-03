@@ -1,9 +1,10 @@
-const path = require('path');
-const webpack = require('webpack');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const HTMLWebpackPlugin = require('html-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 
-const appConfig = require('../config');
+const appConfig = require('../config')
+
 
 module.exports = {
   node: {
@@ -13,7 +14,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -24,6 +25,9 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'worker-loader',
+          query: {
+            cacheDirectory: true,
+          },
         },
       },
     ],
@@ -39,4 +43,7 @@ module.exports = {
       __REACT_DEVTOOLS_GLOBAL_HOOK__: '({ isDisabled: true })',
     }),
   ],
-};
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
+}
