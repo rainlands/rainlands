@@ -4,29 +4,19 @@ import Mousetrap from 'mousetrap'
 
 const KeymapContext = React.createContext()
 
-export class CoolKeysProvider extends Component {
-  render() {
-    return (
-      <KeymapContext.Provider value={this.props.keymap}>
-        {this.props.children}
-      </KeymapContext.Provider>
-    )
-  }
-}
+export const CoolKeysProvider = ({ keymap, children }) => (
+  <KeymapContext.Provider value={keymap}>{children}</KeymapContext.Provider>
+)
 
-export class CoolKeys extends Component {
-  render() {
-    return (
-      <KeymapContext.Consumer>
-        {(keymap) => (
-          <CoolKeysBinder keymap={keymap} {...this.props}>
-            {this.props.children}
-          </CoolKeysBinder>
-        )}
-      </KeymapContext.Consumer>
-    )
-  }
-}
+export const CoolKeys = ({ keymap, children, ...props }) => (
+  <KeymapContext.Consumer>
+    {(keymap) => (
+      <CoolKeysBinder keymap={keymap} {...props}>
+        {children}
+      </CoolKeysBinder>
+    )}
+  </KeymapContext.Consumer>
+)
 
 class CoolKeysBinder extends Component {
   componentDidMount() {
