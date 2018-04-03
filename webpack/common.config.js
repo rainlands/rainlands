@@ -20,16 +20,6 @@ module.exports = {
           loader: 'babel-loader',
         },
       },
-      {
-        test: /\.worker\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'worker-loader',
-          query: {
-            cacheDirectory: true,
-          },
-        },
-      },
     ],
   },
   plugins: [
