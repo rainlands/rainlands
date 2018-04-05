@@ -36,7 +36,7 @@ export default class Client {
 
     this.generator = new TerrainGenerator({
       seed: 1,
-      depth: 20,
+      depth: 10,
       chunkSize: 16,
       caves: {
         frequency: 5,
