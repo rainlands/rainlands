@@ -23,7 +23,7 @@ export default class Client {
       container,
       fow: 45,
       near: 0.3,
-      far: 300,
+      far: 1000,
       position: [0, 100, 0],
     })
     controls.initializeControls(this.camera)

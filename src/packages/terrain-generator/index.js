@@ -1,8 +1,9 @@
-import { Noise } from 'noisejs'
 import euc from 'euclidean-distance'
 import { isEqual as lodashIsEqual } from 'lodash'
 import * as utils from './utils'
 
+
+const asyncTimeout = (t) => new Promise((resolve) => setTimeout(resolve, t))
 
 export default class TerrainGenerator {
   constructor({
@@ -21,7 +22,8 @@ export default class TerrainGenerator {
     },
   } = {}) {
     Object.assign(this, {
-      noise: new Noise(seed),
+      ready: false,
+      seed,
       depth,
       chunkSize,
       caves,
@@ -30,74 +32,126 @@ export default class TerrainGenerator {
       latestPosition: [],
       latestChunkedPosition: [],
     })
+
+    utils.init(seed).then(() => {
+      this.ready = true
+    })
   }
 
-  _addChunks({ chunkedPosition, renderDistance, unrenderOffset }) {
+  isChunkNeeded = ({ chunkPosition, renderDistance, unrenderOffset }) => {
+    const [xStartPos, zStartPos] = this.latestChunkedPosition.map((chunkPos) => chunkPos - (renderDistance + unrenderOffset + 1))
+
+    const [xEndPos, zEndPos] = this.latestChunkedPosition.map((chunkPos) => chunkPos + renderDistance + unrenderOffset - 1)
+
+    const [x, z] = chunkPosition
+
+    return !(+z < zStartPos || +z > zEndPos || (+x < xStartPos || +x > xEndPos))
+  }
+
+  async _addChunks({ chunkedPosition, renderDistance, unrenderOffset }) {
     const [xChunkPos, zChunkPos] = chunkedPosition
 
     const [xStartPos, zStartPos] = chunkedPosition.map((chunkPos) => chunkPos - (renderDistance + 1))
 
     const [xEndPos, zEndPos] = chunkedPosition.map((chunkPos) => chunkPos + renderDistance)
 
-    const added = {}
-
     for (let x = xStartPos; x < xEndPos; x++) {
       for (let z = zStartPos; z < zEndPos; z++) {
-        if (!this.chunks[x]) this.chunks[x] = {}
+        // if (!this.chunks[x]) this.chunks[x] = {}
+        //
+        // if (!this.chunks[x][z]) {
+        //   this.chunks[x][z] = 0
+        //   const chunk = new Uint8Array(await utils.genChunk3({
+        //     position: { x, z },
+        //     size: this.chunkSize,
+        //     depth: this.depth,
+        //
+        //     frequency: this.caves.frequency,
+        //     redistribution: this.caves.redistribution,
+        //   }))
+        //
+        //   if (this.chunks[x] && this.chunks[x][z] === 0) {
+        //     this.chunks[x][z] = chunk
+        //     if (!added[x]) added[x] = {}
+        //     added[x][z] = this.chunks[x][z]
+        //   }
+        // }
+        await asyncTimeout(10)
 
-        if (!this.chunks[x][z]) {
-          this.chunks[x][z] = utils.genChunk3({
-            noise: this.noise,
-
-            position: { x, z },
-            size: this.chunkSize,
-            depth: this.depth,
-
-            frequency: this.caves.frequency,
-            redistribution: this.caves.redistribution,
+        if (
+          this.isChunkNeeded({
+            chunkPosition: [x, z],
+            renderDistance,
+            unrenderOffset,
           })
+        ) {
+          if (!this.chunks[x]) this.chunks[x] = {}
+          if (!this.chunks[x][z]) {
+            this.chunks[x][z] = 'Loading...'
 
-          if (!added[x]) added[x] = {}
-          added[x][z] = this.chunks[x][z]
+            await utils
+              .genChunk3({
+                position: { x, z },
+                size: this.chunkSize,
+                depth: this.depth,
+
+                frequency: this.caves.frequency,
+                redistribution: this.caves.redistribution,
+              })
+              .then(async (chunk) => {
+                if (this.chunks[x] && this.chunks[x][z] === 'Loading...') {
+                  this.chunks[x][z] = new Uint8Array(chunk)
+
+                  this.callOnUpdate({
+                    removed: {},
+                    added: {
+                      [x]: {
+                        [z]: this.chunks[x][z],
+                      },
+                    },
+                  })
+                }
+              })
+          }
         }
       }
     }
-
-    return added
   }
 
   _removeChunks({ chunkedPosition, renderDistance, unrenderOffset }) {
-    const removed = {}
-    const [xChunkPos, zChunkPos] = chunkedPosition
-
     const [xStartPos, zStartPos] = chunkedPosition.map((chunkPos) => chunkPos - (renderDistance + unrenderOffset + 1))
 
     const [xEndPos, zEndPos] = chunkedPosition.map((chunkPos) => chunkPos + renderDistance + unrenderOffset - 1)
 
-    Object.keys(this.chunks).forEach((x) => {
-      Object.keys(this.chunks[x]).forEach((z) => {
-        if (+z < zStartPos || +z > zEndPos || (+x < xStartPos || +x > xEndPos)) {
-          if (!removed[x]) removed[x] = {}
-          removed[x][z] = { ...this.chunks[x][z] }
+    Object.keys(this.chunks).forEach(async (x) => {
+      Object.keys(this.chunks[x]).forEach(async (z) => {
+        await asyncTimeout(100)
 
-          delete this.chunks[x][z]
-          if (Object.keys(this.chunks[x]).length === 0) {
-            delete this.chunks[x]
+        if (this.chunks[x] && this.chunks[x][z]) {
+          if (+z < zStartPos || +z > zEndPos || (+x < xStartPos || +x > xEndPos)) {
+            this.callOnUpdate({
+              added: {},
+              removed: {
+                [x]: {
+                  [z]: this.chunks[x][z],
+                },
+              },
+            })
+
+            delete this.chunks[x][z]
+            if (Object.keys(this.chunks[x]).length === 0) {
+              delete this.chunks[x]
+            }
           }
         }
       })
+      await asyncTimeout(1000)
     })
-
-    return removed
   }
 
-  _updateChunks(params) {
-    const added = this._addChunks(params)
-    const removed = this._removeChunks(params)
-
-    if (Object.keys(added).length > 0 || Object.keys(removed).length > 0) {
-      this.callOnUpdate({ added, removed })
-    }
+  async _updateChunks(params) {
+    this._addChunks(params)
+    this._removeChunks(params)
   }
 
   callOnUpdate(data) {
@@ -113,7 +167,7 @@ export default class TerrainGenerator {
   update({ position, renderDistance, unrenderOffset }) {
     const { x, z } = position
 
-    if (!lodashIsEqual([x, z], this.latestPosition)) {
+    if (this.ready && !lodashIsEqual([x, z], this.latestPosition)) {
       this.latestPosition = [x, z]
 
       const chunkedPosition = [x, z].map((v) => {

@@ -4,35 +4,12 @@ import { mapObject } from '@packages/utils'
 
 const utilsWorker = new WebworkerPromise(new Worker('utils.worker.js'))
 
-utilsWorker
-  .postMessage('ping')
-  .then((response) => {
-    console.log(response)
-    // handle response
-  })
-  .catch((error) => {
-    // handle error
-  })
+export const init = (payload) => utilsWorker.postMessage({
+  type: 'init',
+  payload,
+})
 
-export const genChunk3 = ({ noise, position, size, depth, frequency, redistribution }) => {
-  const { x: xStart, z: zStart } = mapObject(position, (key, value, index) => value * size)
-
-  const { x: xEnd, z: zEnd } = mapObject(position, (key, value, index) => value * size + size)
-
-  const chunk = []
-
-  for (let y = 0; y < depth; y++) {
-    for (let x = xStart; x < xEnd; x++) {
-      for (let z = zStart; z < zEnd; z++) {
-        const noiseValue = noise.perlin3(x / frequency, y / frequency, z / frequency)
-
-        const normalized = (noiseValue + 1) / 2 // 0 - 1
-        const redistributed = Math.pow(normalized, redistribution)
-
-        chunk.push(Math.round(redistributed))
-      }
-    }
-  }
-
-  return chunk
-}
+export const genChunk3 = (payload) => utilsWorker.postMessage({
+  type: 'genChunk3',
+  payload,
+})

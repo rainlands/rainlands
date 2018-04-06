@@ -10,11 +10,11 @@ export default class SettingsStore {
       },
       game: {
         player: {
-          speed: 1,
+          speed: 2,
         },
         render: {
-          renderDistance: 1,
-          unrenderOffset: 0,
+          renderDistance: 10,
+          unrenderOffset: 2,
         },
         map: {
           seed: 500,
