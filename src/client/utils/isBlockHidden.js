@@ -4,12 +4,16 @@ export default ({ map, position }) => {
   let blockHidden = true
 
   for (let i = -1; i < 2; i++) {
-    for (let j = -1; j < 2; j++) {
-      for (let k = -1; k < 2; k++) {
-        if (!(map[y + i] && map[y + i][x + j] && map[y + i][x + j][z + k])) {
-          blockHidden = false
-        }
-      }
+    // for (let j = -1; j < 2; j++) {
+    //   for (let k = -1; k < 2; k++) {
+    //     if (!(map[y + i] && map[y + i][x + j] && map[y + i][x + j][z + k])) {
+    //       blockHidden = false
+    //     }
+    //   }
+    // }
+
+    if (!(map[y + i] || y === 0)) {
+      blockHidden = false
     }
   }
 
