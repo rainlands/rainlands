@@ -1,5 +1,18 @@
+import WebworkerPromise from 'webworker-promise'
 import { mapObject } from '@packages/utils'
 
+
+const utilsWorker = new WebworkerPromise(new Worker('utils.worker.js'))
+
+utilsWorker
+  .postMessage('ping')
+  .then((response) => {
+    console.log(response)
+    // handle response
+  })
+  .catch((error) => {
+    // handle error
+  })
 
 export const genChunk3 = ({ noise, position, size, depth, frequency, redistribution }) => {
   const { x: xStart, z: zStart } = mapObject(position, (key, value, index) => value * size)

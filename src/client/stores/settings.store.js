@@ -13,7 +13,7 @@ export default class SettingsStore {
           speed: 1,
         },
         render: {
-          renderDistance: 10,
+          renderDistance: 1,
           unrenderOffset: 0,
         },
         map: {
