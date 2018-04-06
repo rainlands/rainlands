@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import TerrainGenerator from '@packages/terrain-generator'
+import { toJS } from 'mobx'
 
 import { createCamera } from '@client/core/camera'
 import { createRenderer } from '@client/core/renderer'
@@ -38,7 +39,7 @@ export default class Client {
       },
     })
 
-    this.generator = new TerrainGenerator(settingsStore.game.map)
+    this.generator = new TerrainGenerator(toJS(settingsStore.game.map))
 
     this.generator.onUpdate(({ added, removed }) => {
       this.updateMap({ added, removed })

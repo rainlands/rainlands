@@ -10,7 +10,7 @@ export const renderChunks = ({ chunks, scene, chunkSize }) => {
   Object.keys(chunks).forEach((i, indexI) => {
     Object.keys(chunks[i]).forEach((j, indexJ) => {
       const geometry = new THREE.Geometry()
-      const chunked = lodashChunk(lodashChunk(chunks[i][j], 16), 16)
+      const chunked = lodashChunk(lodashChunk(new Uint8Array(chunks[i][j]), 16), 16)
 
       for (let y = 0; y < chunked.length; y++) {
         for (let x = 0; x < chunked[y].length; x++) {

@@ -95,12 +95,12 @@ export default class TerrainGenerator {
                 size: this.chunkSize,
                 depth: this.depth,
 
-                frequency: this.caves.frequency,
-                redistribution: this.caves.redistribution,
+                ...this.caves,
               })
               .then(async (chunk) => {
                 if (this.chunks[x] && this.chunks[x][z] === 'Loading...') {
-                  this.chunks[x][z] = new Uint8Array(chunk)
+                  // this.chunks[x][z] = new Uint8Array(chunk)
+                  this.chunks[x][z] = chunk
 
                   this.callOnUpdate({
                     removed: {},

@@ -10,19 +10,21 @@ export default class SettingsStore {
       },
       game: {
         player: {
-          speed: 2,
+          speed: 1,
         },
         render: {
-          renderDistance: 10,
+          renderDistance: 5,
           unrenderOffset: 2,
         },
         map: {
-          seed: 500,
-          depth: 30,
+          seed: Math.random() * 100,
+          depth: 100,
           chunkSize: 16,
           caves: {
-            frequency: 30,
-            redistribution: 0.6,
+            frequency: [100, 50, 100],
+            redistribution: 0.5,
+            octaves: 5,
+            octavesCoef: 0.7,
           },
           surface: {
             frequency: 100,

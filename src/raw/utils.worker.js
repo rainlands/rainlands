@@ -5,7 +5,7 @@ const Noisejs = require('noisejs')
 
 let noise
 
-const genChunk3 = ({ position, size, depth, frequency, redistribution }) => {
+const genChunk3 = ({ position, size, depth, frequency, redistribution, octaves, octavesCoef }) => {
   const [xStart, zStart] = Object.values(position).map((v) => v * size)
   const [xEnd, zEnd] = Object.values(position).map((v) => v * size + size)
 
@@ -14,9 +14,21 @@ const genChunk3 = ({ position, size, depth, frequency, redistribution }) => {
   for (let y = 0; y < depth; y++) {
     for (let x = xStart; x < xEnd; x++) {
       for (let z = zStart; z < zEnd; z++) {
-        const noiseValue = noise.perlin3(x / frequency, y / frequency, z / frequency)
+        let noiseValue = 0
 
-        const normalized = (noiseValue + 1) / 2 // 0 - 1
+        for (let o = 0; o < octaves; o++) {
+          noiseValue +=
+            Math.pow(octavesCoef, o + 1) *
+            noise.perlin3(
+              x / frequency[0] / Math.pow(octavesCoef, o),
+              y / frequency[1] / Math.pow(octavesCoef, o),
+              z / frequency[2] / Math.pow(octavesCoef, o)
+            )
+        }
+
+        const coef = 1 + Math.pow(octavesCoef, octaves)
+
+        const normalized = (noiseValue + coef) / (coef * 2) // 0 - 1
         const redistributed = Math.pow(normalized, redistribution)
 
         chunk.push(Math.round(redistributed))
