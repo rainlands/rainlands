@@ -9,6 +9,8 @@
   "author": "rainlands",
   "license": "MIT",
   "dependencies": {
+    "euclidean-distance": "^1.0.0",
+    "lodash": "^4.17.5",
     "noisejs": "^2.1.0",
     "workly": "^1.0.1"
   }

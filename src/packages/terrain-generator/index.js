@@ -1,4 +1,6 @@
 import { Noise } from 'noisejs'
+import euc from 'euclidean-distance'
+import { isEqual as lodashIsEqual } from 'lodash'
 import * as utils from './utils'
 
 
@@ -25,6 +27,8 @@ export default class TerrainGenerator {
       caves,
       surface,
       chunks: {},
+      latestPosition: [],
+      latestChunkedPosition: [],
     })
   }
 
@@ -66,9 +70,9 @@ export default class TerrainGenerator {
     const removed = {}
     const [xChunkPos, zChunkPos] = chunkedPosition
 
-    const [xStartPos, zStartPos] = chunkedPosition.map((chunkPos) => chunkPos - (renderDistance + 1 + unrenderOffset))
+    const [xStartPos, zStartPos] = chunkedPosition.map((chunkPos) => chunkPos - (renderDistance + unrenderOffset + 1))
 
-    const [xEndPos, zEndPos] = chunkedPosition.map((chunkPos) => chunkPos + renderDistance + unrenderOffset)
+    const [xEndPos, zEndPos] = chunkedPosition.map((chunkPos) => chunkPos + renderDistance + unrenderOffset - 1)
 
     Object.keys(this.chunks).forEach((x) => {
       Object.keys(this.chunks[x]).forEach((z) => {
@@ -109,18 +113,26 @@ export default class TerrainGenerator {
   update({ position, renderDistance, unrenderOffset }) {
     const { x, z } = position
 
-    const chunkedPosition = [x, z].map((v) => {
-      let c = Math.ceil((v + this.chunkSize / 2) / this.chunkSize)
+    if (!lodashIsEqual([x, z], this.latestPosition)) {
+      this.latestPosition = [x, z]
 
-      if (Object.is(c, -0)) c = 0
+      const chunkedPosition = [x, z].map((v) => {
+        let c = Math.ceil((v + this.chunkSize / 2) / this.chunkSize)
 
-      return c
-    })
+        if (Object.is(c, -0)) c = 0
 
-    this._updateChunks({
-      chunkedPosition,
-      renderDistance,
-      unrenderOffset,
-    })
+        return c
+      })
+
+      if (!lodashIsEqual(chunkedPosition, this.latestChunkedPosition)) {
+        this.latestChunkedPosition = chunkedPosition
+
+        this._updateChunks({
+          chunkedPosition,
+          renderDistance,
+          unrenderOffset,
+        })
+      }
+    }
   }
 }

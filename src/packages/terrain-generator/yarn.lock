@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+euclidean-distance@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/euclidean-distance/-/euclidean-distance-1.0.0.tgz#703bc213e97c1d731d79b599e937941ba9670a68"
+
+lodash@^4.17.5:
+  version "4.17.5"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+
 noisejs@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/noisejs/-/noisejs-2.1.0.tgz#84b4c4cd04ff43367034f65253e213e0d9fe1aff"

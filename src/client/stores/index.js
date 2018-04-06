@@ -1,6 +1,6 @@
 import SettingsStore from './settings.store'
 
 
-export default {
+module.exports = {
   settingsStore: new SettingsStore(),
 }
