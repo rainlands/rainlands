@@ -45,6 +45,7 @@ export default class TerrainGenerator {
 
   _startQueue() {
     setInterval(() => {
+      console.log(this.pending.length)
       if (this.pending.length > 0 && this.ready) {
         const { chunkedPosition } = this.latestParams
 
@@ -52,22 +53,26 @@ export default class TerrainGenerator {
           .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
           .reverse()
 
-        let sent
-
-        while (!sent) {
-          const chunk = this.pending.shift()
+        for (let i = 0; i < this.pending.length; i++) {
+          const chunk = this.pending[i]
 
           if (chunk) {
             if (this._isChunkNeeded(chunk.position)) {
-              this._callOnUpdate({
-                added: chunk,
-              })
+              if (!chunk.sent) {
+                this._callOnUpdate({
+                  added: chunk,
+                })
 
-              sent = true
+                this.pending[i].sent = true
+
+                break
+              }
             }
-          }
-          else {
-            sent = true
+            else {
+              this._callOnUpdate({
+                removed: this.pending.splice(i, 1)[0],
+              })
+            }
           }
         }
       }
@@ -90,37 +95,78 @@ export default class TerrainGenerator {
   }
 
   async _loadChunks({ chunkedPosition, renderDistance, unrenderOffset, preloadOffset }) {
+    let positionsToGen = []
+
     for (let i = -renderDistance; i < renderDistance + 1; i++) {
       for (let j = -renderDistance; j < renderDistance + 1; j++) {
         const position = [chunkedPosition[0] + i, chunkedPosition[1] + j]
 
         if (!this.pending.find((e) => isEqual(e.position, position))) {
-          const { chunkSize, chunkDepth, surface, caves } = this
-          const chunk = new Uint8Array(chunkSize * chunkSize * chunkDepth)
-
-          let transferred = 0
-
-          await utils.genChunk3(
-            { position, chunkSize, chunkDepth, surface, caves },
-            (event, data) => {
-              if (event === 'column') {
-                const column = new Uint8Array(data)
-
-                chunk.set(column, transferred)
-                transferred += column.length
-              }
-            }
-          )
-
-          if (this._isChunkNeeded(position)) {
-            this.pending.push({
-              position,
-              data: chunk,
-            })
-          }
+          positionsToGen.push(position)
         }
       }
     }
+
+    positionsToGen = positionsToGen
+      .sort((a, b) => euc(b, chunkedPosition) > euc(a, chunkedPosition))
+      .reverse()
+
+    for (let i = 0; i < positionsToGen.length; i++) {
+      const position = positionsToGen[i]
+
+      const { chunkSize, chunkDepth, surface, caves } = this
+      const chunk = new Uint8Array(chunkSize * chunkSize * chunkDepth)
+
+      let transferred = 0
+
+      await utils.genChunk3({ position, chunkSize, chunkDepth, surface, caves }, (event, data) => {
+        if (event === 'column') {
+          const column = new Uint8Array(data)
+
+          chunk.set(column, transferred)
+          transferred += column.length
+        }
+      })
+
+      if (this._isChunkNeeded(position)) {
+        this.pending.push({
+          position,
+          data: chunk,
+        })
+      }
+    }
+
+    // for (let i = -renderDistance; i < renderDistance + 1; i++) {
+    //   for (let j = -renderDistance; j < renderDistance + 1; j++) {
+    //     const position = [chunkedPosition[0] + i, chunkedPosition[1] + j]
+    //
+    //     if (!this.pending.find((e) => isEqual(e.position, position))) {
+    //       const { chunkSize, chunkDepth, surface, caves } = this
+    //       const chunk = new Uint8Array(chunkSize * chunkSize * chunkDepth)
+    //
+    //       let transferred = 0
+    //
+    //       await utils.genChunk3(
+    //         { position, chunkSize, chunkDepth, surface, caves },
+    //         (event, data) => {
+    //           if (event === 'column') {
+    //             const column = new Uint8Array(data)
+    //
+    //             chunk.set(column, transferred)
+    //             transferred += column.length
+    //           }
+    //         }
+    //       )
+    //
+    //       if (this._isChunkNeeded(position)) {
+    //         this.pending.push({
+    //           position,
+    //           data: chunk,
+    //         })
+    //       }
+    //     }
+    //   }
+    // }
 
     // for (let i = -preloadOffset; i < preloadOffset + 1; i++) {
     //   for (let j = -preloadOffset; j < preloadOffset + 1; j++) {

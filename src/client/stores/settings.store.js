@@ -17,13 +17,13 @@ export default class SettingsStore {
           position: [0, 20, 0],
         },
         render: {
-          renderDistance: 5,
+          renderDistance: 10,
           unrenderOffset: 0,
           preloadOffset: 0,
         },
         map: {
           seed: Math.random() * 100,
-          chunkDepth: 10,
+          chunkDepth: 256,
           chunkSize: 16,
           caves: {
             frequency: [100, 50, 100],

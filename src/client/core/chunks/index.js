@@ -14,7 +14,9 @@ export const renderChunk = ({ chunk: { position, data }, chunkDepth, chunkSize, 
 
   for (let x = 0; x < chunked.length; x++) {
     for (let z = 0; z < chunked[x].length; z++) {
-      for (let y = 0; y < chunked[x][z].length; y++) {
+      const height = chunked[x][z].lastIndexOf(1)
+
+      for (let y = 0; y <= height; y++) {
         if (
           !isBlockHidden({
             map: chunked,
@@ -51,6 +53,7 @@ export const renderChunk = ({ chunk: { position, data }, chunkDepth, chunkSize, 
 }
 
 export const removeChunk = ({ chunk: { position }, scene }) => {
+  console.log(`REMOVING: ${position}`)
   const [i, j] = position
 
   if (CHUNKS_MAP[i]) {
