@@ -1,15 +1,27 @@
 import WebworkerPromise from 'webworker-promise'
-import { mapObject } from '@packages/utils'
+import WorkerPool from 'webworker-promise/lib/pool'
 
 
-const utilsWorker = new WebworkerPromise(new Worker('utils.worker.js'))
-
-export const init = (payload) => utilsWorker.postMessage({
-  type: 'init',
-  payload,
+const utilsWorker = WorkerPool.create({
+  create: () => new Worker('utils.worker.js'),
+  maxThreads: 3,
+  maxConcurrentPerWorker: 1,
 })
 
-export const genChunk3 = (payload) => utilsWorker.postMessage({
-  type: 'genChunk3',
-  payload,
-})
+export const init = (payload, cb) => utilsWorker.postMessage(
+  {
+    type: 'init',
+    payload,
+  },
+  [],
+  cb
+)
+
+export const genChunk3 = (payload, cb) => utilsWorker.postMessage(
+  {
+    type: 'genChunk3',
+    payload,
+  },
+  [],
+  cb
+)

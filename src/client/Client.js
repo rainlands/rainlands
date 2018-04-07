@@ -5,7 +5,7 @@ import { toJS } from 'mobx'
 import { createCamera } from '@client/core/camera'
 import { createRenderer } from '@client/core/renderer'
 import { createScene } from '@client/core/scene'
-import { renderChunks, removeChunks } from '@client/core/chunks'
+import { renderChunk, removeChunk } from '@client/core/chunks'
 
 import * as controls from '@client/utils/controls'
 import Stats from '@client/utils/Stats'
@@ -22,10 +22,7 @@ export default class Client {
 
     this.camera = createCamera({
       container,
-      fow: 45,
-      near: 0.3,
-      far: 1000,
-      position: [0, 100, 0],
+      ...settingsStore.game.player,
     })
     controls.initializeControls(this.camera)
 
@@ -64,14 +61,19 @@ export default class Client {
   }
 
   updateMap({ added, removed }) {
-    renderChunks({
-      chunks: added,
-      scene: this.scene,
-      chunkSize: 16,
-    })
-    removeChunks({
-      chunks: removed,
-      scene: this.scene,
-    })
+    if (added) {
+      renderChunk({
+        chunk: added,
+        scene: this.scene,
+        ...settingsStore.game.map,
+      })
+    }
+
+    if (removed) {
+      removeChunk({
+        chunk: removed,
+        scene: this.scene,
+      })
+    }
   }
 }
