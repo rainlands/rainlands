@@ -8,7 +8,9 @@ const CHUNKS_MAP = {}
 const CUBE_MESH = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
 const CUBE_MATERIAL = loadMaterials(1)
 
-export const renderChunk = ({
+const asyncTimeout = (t) => new Promise((resolve) => setTimeout(resolve, t))
+
+export const renderChunk = async ({
   chunk: { position, data, height },
   chunkDepth,
   chunkSize,
@@ -20,6 +22,7 @@ export const renderChunk = ({
   const [i, j] = position
 
   for (let x = 0; x < chunked.length; x++) {
+    await asyncTimeout(1)
     for (let z = 0; z < chunked[x].length; z++) {
       for (let y = 0; y <= height; y++) {
         if (

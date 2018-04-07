@@ -50,7 +50,7 @@ export default class TerrainGenerator {
   }
 
   _startQueue(interval) {
-    setInterval(() => {
+    const update = () => {
       const { chunkedPosition, projectionMatrix, renderDistance } = this.latestParams
 
       this.frustum.setFromMatrix(projectionMatrix)
@@ -76,7 +76,7 @@ export default class TerrainGenerator {
           if ((visibleA && visibleB) || (!visibleA && !visibleB)) {
             return euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition)
           }
-          return true
+          return visibleA
         })
         .reverse()
 
@@ -124,7 +124,22 @@ export default class TerrainGenerator {
           break
         }
       }
-    }, interval)
+
+      let timeout
+
+      if (this.unsent.length > 0) {
+        timeout = euc(this.unsent[0].position, chunkedPosition) / 3 * interval
+      }
+      else {
+        timeout = interval * 10
+      }
+
+      setTimeout(() => {
+        update()
+      }, timeout)
+    }
+
+    update()
   }
 
   _isChunkNeeded(chunkPosition) {

@@ -17,8 +17,8 @@ export default class SettingsStore {
           position: [0, 200, 0],
         },
         render: {
-          renderDistance: 5,
-          unrenderOffset: 2,
+          renderDistance: 10,
+          unrenderOffset: 5,
         },
         renderer: {
           clearColor: '#EDEDF2',
@@ -26,8 +26,8 @@ export default class SettingsStore {
         scene: {
           fog: {
             color: '#EDEDF2',
-            near: 5 / 3 * 16,
-            far: 5 * 16,
+            near: 10 / 3 * 16,
+            far: 10 * 16,
           },
           helpers: {
             axes: 5,
@@ -37,7 +37,7 @@ export default class SettingsStore {
           seed: Math.random() * 1000,
           chunkDepth: 256,
           chunkSize: 16,
-          updateInterval: 300,
+          updateInterval: 100,
           caves: {
             frequency: [100, 50, 100],
             redistribution: 0.5,
