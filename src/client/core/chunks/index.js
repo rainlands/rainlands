@@ -5,6 +5,9 @@ import isBlockHidden from '@client/utils/isBlockHidden'
 
 const CHUNKS_MAP = {}
 const CUBE_MESH = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
+const CUBE_MATERIAL = new THREE.MeshLambertMaterial({
+  color: 'green',
+})
 
 export const renderChunk = ({
   chunk: { position, data, height },
@@ -40,10 +43,7 @@ export const renderChunk = ({
   }
 
   const id = Date.now()
-  const mesh = new THREE.Mesh(
-    new THREE.BufferGeometry().fromGeometry(geometry),
-    new THREE.MeshNormalMaterial()
-  )
+  const mesh = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(geometry), CUBE_MATERIAL)
 
   if (!CHUNKS_MAP[i]) CHUNKS_MAP[i] = {}
   CHUNKS_MAP[i][j] = id

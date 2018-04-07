@@ -29,7 +29,7 @@ export default class Client {
     this.scene = createScene({
       fog: {
         near: 0,
-        far: 100,
+        far: settingsStore.game.render.renderDistance * settingsStore.game.map.chunkSize * 3,
       },
       helpers: {
         axes: 5,

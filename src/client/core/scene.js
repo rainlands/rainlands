@@ -14,5 +14,14 @@ export const createScene = ({ fog, helpers }) => {
     }
   }
 
+  const dirLight = new THREE.DirectionalLight(0xFFFFFF, 0.7)
+
+  dirLight.position.set(1, 2, 1.5)
+
+  const hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.7)
+
+  scene.add(dirLight)
+  scene.add(hemiLight)
+
   return scene
 }

@@ -10,18 +10,18 @@ export default class SettingsStore {
       },
       game: {
         player: {
-          speed: 1,
+          speed: 0.1,
           fow: 45,
           near: 0.3,
           far: 1000,
           position: [0, 200, 0],
         },
         render: {
-          renderDistance: 5,
+          renderDistance: 10,
           unrenderOffset: 2,
         },
         map: {
-          seed: 1234,
+          seed: Math.random() * 1000,
           chunkDepth: 256,
           chunkSize: 16,
           updateInterval: 100,
