@@ -1,29 +1,52 @@
-import { mapObject } from '@packages/utils'
+import WebworkerPromise from 'webworker-promise'
 
 
-export const genChunk3 = ({ noise, position, size, depth, frequency, redistribution }) => {
-  const { x: xStart, z: zStart } = mapObject(position, (key, value, index) => value * size)
+const workers = [
+  new WebworkerPromise(new Worker('utils.worker.js')),
+  new WebworkerPromise(new Worker('utils.worker.js')),
+  new WebworkerPromise(new Worker('utils.worker.js')),
+  new WebworkerPromise(new Worker('utils.worker.js')),
+]
 
-  const { x: xEnd, z: zEnd } = mapObject(position, (key, value, index) => value * size + size)
+// import WorkerPool from 'webworker-promise/lib/pool'
+//
+//
+// const utilsWorker = WorkerPool.create({
+//   create: () => new Worker('utils.worker.js'),
+//   maxThreads: 3,
+//   maxConcurrentPerWorker: 1,
+// })
 
-  const chunk = {}
+let index = 0
+const getActiveWorker = () => {
+  return workers[index]
 
-  for (let y = 0; y < depth; y++) {
-    chunk[y] = {}
-
-    for (let x = xStart; x < xEnd; x++) {
-      chunk[y][x] = {}
-
-      for (let z = zStart; z < zEnd; z++) {
-        const noiseValue = noise.perlin3(x / frequency, y / frequency, z / frequency)
-
-        const normalized = (noiseValue + 1) / 2 // 0 - 1
-        const redistributed = Math.pow(normalized, redistribution)
-
-        chunk[y][x][z] = redistributed
-      }
-    }
+  if (index >= 3) {
+    index = 0
   }
-
-  return chunk
+  else {
+    index += 1
+  }
 }
+
+export const init = async (payload, cb) => {
+  for (let i = 0; i < workers.length; i++) {
+    await workers[i].postMessage(
+      {
+        type: 'init',
+        payload,
+      },
+      [],
+      cb
+    )
+  }
+}
+
+export const genChunk3 = (payload, cb) => getActiveWorker().postMessage(
+  {
+    type: 'genChunk3',
+    payload,
+  },
+  [],
+  cb
+)
