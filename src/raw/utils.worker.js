@@ -71,7 +71,10 @@ const genChunk3 = ({ position, chunkSize, chunkDepth, caves, surface }, emit) =>
         }
       }
 
-      emit('column', column.buffer)
+      emit('column', {
+        height,
+        data: column.buffer,
+      })
     }
   }
 

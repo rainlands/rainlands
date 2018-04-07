@@ -6,7 +6,12 @@ import isBlockHidden from '@client/utils/isBlockHidden'
 const CHUNKS_MAP = {}
 const CUBE_MESH = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
 
-export const renderChunk = ({ chunk: { position, data }, chunkDepth, chunkSize, scene }) => {
+export const renderChunk = ({
+  chunk: { position, data, height },
+  chunkDepth,
+  chunkSize,
+  scene,
+}) => {
   const geometry = new THREE.Geometry()
   const chunked = lodashChunk(lodashChunk(data, chunkDepth), chunkSize)
 
@@ -14,8 +19,6 @@ export const renderChunk = ({ chunk: { position, data }, chunkDepth, chunkSize, 
 
   for (let x = 0; x < chunked.length; x++) {
     for (let z = 0; z < chunked[x].length; z++) {
-      const height = chunked[x][z].lastIndexOf(1)
-
       for (let y = 0; y <= height; y++) {
         if (
           !isBlockHidden({

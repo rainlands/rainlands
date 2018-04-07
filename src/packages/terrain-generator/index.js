@@ -1,5 +1,6 @@
 import euc from 'euclidean-distance'
 import { isEqual } from 'lodash'
+import * as THREE from 'three'
 import * as utils from './utils'
 
 
@@ -42,6 +43,7 @@ export default class TerrainGenerator {
 
     utils.init(seed).then(() => {
       this.ready = true
+      this.frustum = new THREE.Frustum()
 
       this._startQueue(updateInterval)
     })
@@ -49,41 +51,29 @@ export default class TerrainGenerator {
 
   _startQueue(interval) {
     setInterval(() => {
-      // if (this.pending.length > 0) {
-      //   const { chunkedPosition } = this.latestParams
-      //
-      //   this.pending = this.pending
-      //     .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
-      //     .reverse()
-      //
-      //   for (let i = 0; i < this.pending.length; i++) {
-      //     const chunk = this.pending[i]
-      //
-      //     if (chunk) {
-      //       if (this._isChunkNeeded(chunk.position)) {
-      //         if (!chunk.sent) {
-      //           this._callOnUpdate({
-      //             added: chunk,
-      //           })
-      //
-      //           this.pending[i].sent = true
-      //
-      //           break
-      //         }
-      //       }
-      //       else {
-      //         this._callOnUpdate({
-      //           removed: this.pending.splice(i, 1)[0],
-      //         })
-      //       }
-      //     }
-      //   }
-      // }
+      const { chunkedPosition, projectionMatrix } = this.latestParams
 
-      const { chunkedPosition } = this.latestParams
+      this.frustum.setFromMatrix(projectionMatrix)
 
       this.unsent = this.unsent
-        .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
+        .sort((a, b) => {
+          const visibleA = this.frustum.containsPoint(new THREE.Vector3(
+            a.position[0] * this.chunkSize,
+            a.height,
+            a.position[1] * this.chunkSize
+          ))
+
+          const visibleB = this.frustum.containsPoint(new THREE.Vector3(
+            b.position[0] * this.chunkSize,
+            b.height,
+            b.position[1] * this.chunkSize
+          ))
+
+          if ((visibleA && visibleB) || (!visibleA && !visibleB)) {
+            return euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition)
+          }
+          return true
+        })
         .reverse()
 
       for (let i = 0; i < this.unsent.length; i++) {
@@ -164,55 +154,30 @@ export default class TerrainGenerator {
       const chunk = new Uint8Array(chunkSize * chunkSize * chunkDepth)
 
       let transferred = 0
+      let maxHeight = 0
 
-      await utils.genChunk3({ position, chunkSize, chunkDepth, surface, caves }, (event, data) => {
-        if (event === 'column') {
-          const column = new Uint8Array(data)
+      await utils.genChunk3(
+        { position, chunkSize, chunkDepth, surface, caves },
+        (event, { height, data }) => {
+          if (event === 'column') {
+            const column = new Uint8Array(data)
 
-          chunk.set(column, transferred)
-          transferred += column.length
+            if (maxHeight < height) maxHeight = height
+
+            chunk.set(column, transferred)
+            transferred += column.length
+          }
         }
-      })
+      )
 
       if (this._isChunkNeeded(position)) {
         this.unsent.push({
           position,
           data: chunk,
+          height: maxHeight,
         })
       }
     }
-
-    // for (let i = -renderDistance; i < renderDistance + 1; i++) {
-    //   for (let j = -renderDistance; j < renderDistance + 1; j++) {
-    //     const position = [chunkedPosition[0] + i, chunkedPosition[1] + j]
-    //
-    //     if (!this.pending.find((e) => isEqual(e.position, position))) {
-    //       const { chunkSize, chunkDepth, surface, caves } = this
-    //       const chunk = new Uint8Array(chunkSize * chunkSize * chunkDepth)
-    //
-    //       let transferred = 0
-    //
-    //       await utils.genChunk3(
-    //         { position, chunkSize, chunkDepth, surface, caves },
-    //         (event, data) => {
-    //           if (event === 'column') {
-    //             const column = new Uint8Array(data)
-    //
-    //             chunk.set(column, transferred)
-    //             transferred += column.length
-    //           }
-    //         }
-    //       )
-    //
-    //       if (this._isChunkNeeded(position)) {
-    //         this.pending.push({
-    //           position,
-    //           data: chunk,
-    //         })
-    //       }
-    //     }
-    //   }
-    // }
   }
 
   _callOnUpdate(data) {
@@ -221,12 +186,14 @@ export default class TerrainGenerator {
     }
   }
 
-  update({ position, renderDistance, unrenderOffset }) {
-    const { x, z } = position
+  update({ position, projectionMatrix, renderDistance, unrenderOffset }) {
+    const { x, y, z } = position
 
     Object.assign(this.latestParams, {
+      projectionMatrix,
       renderDistance,
       unrenderOffset,
+      height: y,
     })
 
     if (this.ready && !isEqual([x, z], this.latestParams.position)) {

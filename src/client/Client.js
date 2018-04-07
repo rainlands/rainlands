@@ -54,6 +54,10 @@ export default class Client {
 
     this.generator.update({
       position: this.camera.position,
+      projectionMatrix: new THREE.Matrix4().multiplyMatrices(
+        this.camera.projectionMatrix,
+        this.camera.matrixWorldInverse
+      ),
       ...settingsStore.game.render,
     })
 
