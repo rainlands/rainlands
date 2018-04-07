@@ -30,7 +30,8 @@ export default class TerrainGenerator {
       chunkSize,
       caves,
       surface,
-      pending: [],
+      sent: [],
+      unsent: [],
       latestParams: {
         position: [],
         chunkedPosition: [],
@@ -39,44 +40,84 @@ export default class TerrainGenerator {
 
     utils.init(seed).then(() => {
       this.ready = true
+
       this._startQueue()
     })
   }
 
   _startQueue() {
     setInterval(() => {
-      console.log(this.pending.length)
-      if (this.pending.length > 0 && this.ready) {
-        const { chunkedPosition } = this.latestParams
+      // if (this.pending.length > 0) {
+      //   const { chunkedPosition } = this.latestParams
+      //
+      //   this.pending = this.pending
+      //     .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
+      //     .reverse()
+      //
+      //   for (let i = 0; i < this.pending.length; i++) {
+      //     const chunk = this.pending[i]
+      //
+      //     if (chunk) {
+      //       if (this._isChunkNeeded(chunk.position)) {
+      //         if (!chunk.sent) {
+      //           this._callOnUpdate({
+      //             added: chunk,
+      //           })
+      //
+      //           this.pending[i].sent = true
+      //
+      //           break
+      //         }
+      //       }
+      //       else {
+      //         this._callOnUpdate({
+      //           removed: this.pending.splice(i, 1)[0],
+      //         })
+      //       }
+      //     }
+      //   }
+      // }
 
-        this.pending = this.pending
-          .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
-          .reverse()
+      const { chunkedPosition } = this.latestParams
 
-        for (let i = 0; i < this.pending.length; i++) {
-          const chunk = this.pending[i]
+      this.unsent = this.unsent
+        .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
+        .reverse()
 
-          if (chunk) {
-            if (this._isChunkNeeded(chunk.position)) {
-              if (!chunk.sent) {
-                this._callOnUpdate({
-                  added: chunk,
-                })
+      for (let i = 0; i < this.unsent.length; i++) {
+        const chunk = this.unsent[i]
 
-                this.pending[i].sent = true
+        if (this._isChunkNeeded(chunk.position)) {
+          this._callOnUpdate({
+            added: chunk,
+          })
 
-                break
-              }
-            }
-            else {
-              this._callOnUpdate({
-                removed: this.pending.splice(i, 1)[0],
-              })
-            }
-          }
+          this.sent.push(this.unsent.splice(i, 1)[0])
+
+          break
+        }
+        else {
+          this.unsent.splice(i, 1)
         }
       }
-    }, 50)
+
+      this.sent = this.sent
+        .sort((a, b) => euc(b.position, chunkedPosition) < euc(a.position, chunkedPosition))
+        .reverse()
+
+      for (let i = 0; i < this.sent.length; i++) {
+        const chunk = this.sent[i]
+
+        if (!this._isChunkNeeded(chunk.position)) {
+          this._callOnUpdate({
+            removed: chunk,
+          })
+          this.sent.splice(i, 1)
+
+          break
+        }
+      }
+    }, 100)
   }
 
   _isChunkNeeded(chunkPosition) {
@@ -101,7 +142,10 @@ export default class TerrainGenerator {
       for (let j = -renderDistance; j < renderDistance + 1; j++) {
         const position = [chunkedPosition[0] + i, chunkedPosition[1] + j]
 
-        if (!this.pending.find((e) => isEqual(e.position, position))) {
+        if (
+          !this.sent.find((e) => isEqual(e.position, position))
+          && !this.unsent.find((e) => isEqual(e.position, position))
+        ) {
           positionsToGen.push(position)
         }
       }
@@ -129,7 +173,7 @@ export default class TerrainGenerator {
       })
 
       if (this._isChunkNeeded(position)) {
-        this.pending.push({
+        this.unsent.push({
           position,
           data: chunk,
         })

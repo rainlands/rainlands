@@ -10,14 +10,14 @@ export default class SettingsStore {
       },
       game: {
         player: {
-          speed: 0.15,
+          speed: 0.1,
           fow: 45,
           near: 0.3,
           far: 1000,
           position: [0, 20, 0],
         },
         render: {
-          renderDistance: 10,
+          renderDistance: 5,
           unrenderOffset: 0,
           preloadOffset: 0,
         },

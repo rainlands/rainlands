@@ -53,7 +53,6 @@ export const renderChunk = ({ chunk: { position, data }, chunkDepth, chunkSize, 
 }
 
 export const removeChunk = ({ chunk: { position }, scene }) => {
-  console.log(`REMOVING: ${position}`)
   const [i, j] = position
 
   if (CHUNKS_MAP[i]) {
