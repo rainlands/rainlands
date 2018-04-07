@@ -1,16 +1,56 @@
 // worker.js
 const registerWebworker = require('webworker-promise/lib/register')
-const Noisejs = require('noisejs')
 
+
+importScripts('noise.js')
 
 let noise
 
 const genSurfacePoint = (
   position,
   { frequency, redistribution, octaves, octavesCoef, minHeight, maxHeight }
-) => 5
+) => {
+  const [x, z] = position
+  let noiseValue = 0
 
-const genCavesPoint = ({ position, frequency, redistribution, octaves, octavesCoef }) => {}
+  for (let o = 0; o < octaves; o++) {
+    noiseValue +=
+      Math.pow(octavesCoef, o + 1) *
+      noise.perlin2(
+        x / frequency[0] / Math.pow(octavesCoef, o),
+        z / frequency[1] / Math.pow(octavesCoef, o)
+      )
+  }
+
+  const coef = 1 + Math.pow(octavesCoef, octaves)
+
+  const normalized = minHeight + (noiseValue + coef) / (coef * 2) * (maxHeight - minHeight) // 0 - 1
+  const redistributed = Math.pow(normalized, redistribution)
+
+  return Math.round(redistributed)
+}
+
+const genCavesPoint = (position, { frequency, redistribution, octaves, octavesCoef }) => {
+  const [x, y, z] = position
+  let noiseValue = 0
+
+  for (let o = 0; o < octaves; o++) {
+    noiseValue +=
+      Math.pow(octavesCoef, o + 1) *
+      noise.perlin3(
+        x / frequency[0] / Math.pow(octavesCoef, o),
+        y / frequency[1] / Math.pow(octavesCoef, o),
+        z / frequency[2] / Math.pow(octavesCoef, o)
+      )
+  }
+
+  const coef = 1 + Math.pow(octavesCoef, octaves)
+
+  const normalized = (noiseValue + coef) / (coef * 2) // 0 - 1
+  const redistributed = Math.pow(normalized, redistribution)
+
+  return Math.round(redistributed)
+}
 
 const genChunk3 = ({ position, chunkSize, chunkDepth, caves, surface }, emit) => {
   const [xStart, zStart] = Object.values(position).map((v) => v * chunkSize)
@@ -23,7 +63,7 @@ const genChunk3 = ({ position, chunkSize, chunkDepth, caves, surface }, emit) =>
 
       for (let y = 0; y < chunkDepth; y++) {
         if (y <= height) {
-          column[y] = 1
+          column[y] = genCavesPoint([x, y, z], caves)
         }
         else {
           column[y] = 0
@@ -68,7 +108,7 @@ const genChunk3 = ({ position, chunkSize, chunkDepth, caves, surface }, emit) =>
 
 registerWebworker(async ({ type, payload }, emit) => {
   if (type === 'init') {
-    noise = new Noisejs.Noise(payload)
+    noise = new Noise(payload)
 
     return true
   }

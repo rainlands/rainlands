@@ -45,27 +45,31 @@ export const renderChunk = ({ chunk: { position, data }, chunkDepth, chunkSize, 
   if (!CHUNKS_MAP[i]) CHUNKS_MAP[i] = {}
   CHUNKS_MAP[i][j] = id
 
-  if (CHUNKS_MAP[i] && CHUNKS_MAP[i][j]) {
-    mesh.name = id
+  setTimeout(() => {
+    if (CHUNKS_MAP[i] && CHUNKS_MAP[i][j]) {
+      mesh.name = id
 
-    scene.add(mesh)
-  }
+      scene.add(mesh)
+    }
+  }, 100)
 }
 
 export const removeChunk = ({ chunk: { position }, scene }) => {
   const [i, j] = position
 
-  if (CHUNKS_MAP[i]) {
-    const chunkID = CHUNKS_MAP[i][j]
+  setTimeout(() => {
+    if (CHUNKS_MAP[i]) {
+      const chunkID = CHUNKS_MAP[i][j]
 
-    delete CHUNKS_MAP[i][j]
+      delete CHUNKS_MAP[i][j]
 
-    const chunk = scene.getObjectByName(chunkID)
+      const chunk = scene.getObjectByName(chunkID)
 
-    if (chunk) {
-      scene.remove(chunk)
+      if (chunk) {
+        scene.remove(chunk)
+      }
     }
-  }
+  }, 100)
 }
 
 export const updateChunks = () => {}

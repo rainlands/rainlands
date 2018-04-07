@@ -14,7 +14,7 @@ export default class SettingsStore {
           fow: 45,
           near: 0.3,
           far: 1000,
-          position: [0, 20, 0],
+          position: [0, 250, 0],
         },
         render: {
           renderDistance: 5,
@@ -22,9 +22,10 @@ export default class SettingsStore {
           preloadOffset: 0,
         },
         map: {
-          seed: Math.random() * 100,
+          seed: 1234,
           chunkDepth: 256,
           chunkSize: 16,
+          updateInterval: 500,
           caves: {
             frequency: [100, 50, 100],
             redistribution: 0.5,
@@ -32,12 +33,12 @@ export default class SettingsStore {
             octavesCoef: 0.7,
           },
           surface: {
-            frequency: 100,
+            frequency: [500, 500],
             redistribution: 1,
-            octaves: 5,
-            octavesCoef: 0.7,
-            minHeight: 5,
-            maxHeight: 15,
+            octaves: 6,
+            octavesCoef: 0.5,
+            minHeight: 100,
+            maxHeight: 250,
           },
         },
       },

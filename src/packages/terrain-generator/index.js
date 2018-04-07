@@ -8,6 +8,7 @@ export default class TerrainGenerator {
     seed = Math.random() * 100,
     chunkDepth = 10,
     chunkSize = 16,
+    updateInterval = 100,
     caves = {
       frequency: 5,
       redistribution: 100,
@@ -28,6 +29,7 @@ export default class TerrainGenerator {
       seed,
       chunkDepth,
       chunkSize,
+      updateInterval,
       caves,
       surface,
       sent: [],
@@ -41,11 +43,11 @@ export default class TerrainGenerator {
     utils.init(seed).then(() => {
       this.ready = true
 
-      this._startQueue()
+      this._startQueue(updateInterval)
     })
   }
 
-  _startQueue() {
+  _startQueue(interval) {
     setInterval(() => {
       // if (this.pending.length > 0) {
       //   const { chunkedPosition } = this.latestParams
@@ -117,7 +119,7 @@ export default class TerrainGenerator {
           break
         }
       }
-    }, 100)
+    }, interval)
   }
 
   _isChunkNeeded(chunkPosition) {
