@@ -13,7 +13,16 @@ const genSurfacePoint = (
   const [x, z] = position
   let noiseValue = 0
 
-  for (let o = 0; o < octaves; o++) {
+  for (let o = 0; o < octaves - octaves / 3; o++) {
+    noiseValue +=
+      Math.pow(octavesCoef, o + 1) *
+      noise.simplex2(
+        x / frequency[0] / Math.pow(octavesCoef, o),
+        z / frequency[1] / Math.pow(octavesCoef, o)
+      )
+  }
+
+  for (let o = octaves - octaves / 3; o < octaves; o++) {
     noiseValue +=
       Math.pow(octavesCoef, o + 1) *
       noise.perlin2(
@@ -24,10 +33,11 @@ const genSurfacePoint = (
 
   const coef = 1 + Math.pow(octavesCoef, octaves)
 
-  const normalized = minHeight + (noiseValue + coef) / (coef * 2) * (maxHeight - minHeight) // 0 - 1
+  const normalized = (noiseValue + coef) / (coef * 2)
   const redistributed = Math.pow(normalized, redistribution)
+  const adjusted = minHeight + redistributed * (maxHeight - minHeight) // 0 - 1
 
-  return Math.round(redistributed)
+  return Math.round(adjusted)
 }
 
 const genCavesPoint = (position, { frequency, redistribution, octaves, octavesCoef }) => {
