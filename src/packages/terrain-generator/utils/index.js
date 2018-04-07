@@ -1,7 +1,12 @@
 import WebworkerPromise from 'webworker-promise'
 
 
-const utilsWorker = new WebworkerPromise(new Worker('utils.worker.js'))
+const workers = [
+  new WebworkerPromise(new Worker('utils.worker.js')),
+  new WebworkerPromise(new Worker('utils.worker.js')),
+  new WebworkerPromise(new Worker('utils.worker.js')),
+  new WebworkerPromise(new Worker('utils.worker.js')),
+]
 
 // import WorkerPool from 'webworker-promise/lib/pool'
 //
@@ -12,16 +17,32 @@ const utilsWorker = new WebworkerPromise(new Worker('utils.worker.js'))
 //   maxConcurrentPerWorker: 1,
 // })
 
-export const init = (payload, cb) => utilsWorker.postMessage(
-  {
-    type: 'init',
-    payload,
-  },
-  [],
-  cb
-)
+let index = 0
+const getActiveWorker = () => {
+  return workers[index]
 
-export const genChunk3 = (payload, cb) => utilsWorker.postMessage(
+  if (index >= 3) {
+    index = 0
+  }
+  else {
+    index += 1
+  }
+}
+
+export const init = async (payload, cb) => {
+  for (let i = 0; i < workers.length; i++) {
+    await workers[i].postMessage(
+      {
+        type: 'init',
+        payload,
+      },
+      [],
+      cb
+    )
+  }
+}
+
+export const genChunk3 = (payload, cb) => getActiveWorker().postMessage(
   {
     type: 'genChunk3',
     payload,

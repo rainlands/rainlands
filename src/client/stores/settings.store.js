@@ -10,22 +10,21 @@ export default class SettingsStore {
       },
       game: {
         player: {
-          speed: 0.1,
+          speed: 1,
           fow: 45,
           near: 0.3,
           far: 1000,
-          position: [0, 250, 0],
+          position: [0, 200, 0],
         },
         render: {
           renderDistance: 5,
-          unrenderOffset: 0,
-          preloadOffset: 0,
+          unrenderOffset: 2,
         },
         map: {
           seed: 1234,
           chunkDepth: 256,
           chunkSize: 16,
-          updateInterval: 500,
+          updateInterval: 100,
           caves: {
             frequency: [100, 50, 100],
             redistribution: 0.5,

@@ -63,7 +63,8 @@ const genChunk3 = ({ position, chunkSize, chunkDepth, caves, surface }, emit) =>
 
       for (let y = 0; y < chunkDepth; y++) {
         if (y <= height) {
-          column[y] = genCavesPoint([x, y, z], caves)
+          // column[y] = genCavesPoint([x, y, z], caves)
+          column[y] = 1
         }
         else {
           column[y] = 0

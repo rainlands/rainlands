@@ -110,7 +110,7 @@ export default class TerrainGenerator {
       for (let i = 0; i < this.sent.length; i++) {
         const chunk = this.sent[i]
 
-        if (!this._isChunkNeeded(chunk.position)) {
+        if (!this._isChunkNeeded(chunk.position, true)) {
           this._callOnUpdate({
             removed: chunk,
           })
@@ -126,18 +126,18 @@ export default class TerrainGenerator {
     const {
       chunkedPosition: userChunkedPosition,
       renderDistance,
-      preloadOffset,
+      unrenderOffset,
     } = this.latestParams
 
-    const [minX, minZ] = userChunkedPosition.map((e) => e - (renderDistance + preloadOffset))
-    const [maxX, maxZ] = userChunkedPosition.map((e) => e + (renderDistance + preloadOffset))
+    const [minX, minZ] = userChunkedPosition.map((e) => e - (renderDistance + unrenderOffset))
+    const [maxX, maxZ] = userChunkedPosition.map((e) => e + (renderDistance + unrenderOffset))
 
     const [chunkX, chunkZ] = chunkPosition
 
     return chunkX >= minX && chunkX <= maxX && chunkZ >= minZ && chunkZ <= maxZ
   }
 
-  async _loadChunks({ chunkedPosition, renderDistance, unrenderOffset, preloadOffset }) {
+  async _loadChunks({ chunkedPosition, renderDistance, unrenderOffset }) {
     let positionsToGen = []
 
     for (let i = -renderDistance; i < renderDistance + 1; i++) {
@@ -213,19 +213,6 @@ export default class TerrainGenerator {
     //     }
     //   }
     // }
-
-    // for (let i = -preloadOffset; i < preloadOffset + 1; i++) {
-    //   for (let j = -preloadOffset; j < preloadOffset + 1; j++) {
-    //     const position = [chunkedPosition[0] + i, chunkedPosition[1] + j]
-    //
-    //     if (!this.pending.find((e) => isEqual(e.position, position))) {
-    //       this.pending.push({
-    //         position,
-    //         data: 2,
-    //       })
-    //     }
-    //   }
-    // }
   }
 
   _callOnUpdate(data) {
@@ -234,13 +221,12 @@ export default class TerrainGenerator {
     }
   }
 
-  update({ position, renderDistance, unrenderOffset, preloadOffset }) {
+  update({ position, renderDistance, unrenderOffset }) {
     const { x, z } = position
 
     Object.assign(this.latestParams, {
       renderDistance,
       unrenderOffset,
-      preloadOffset,
     })
 
     if (this.ready && !isEqual([x, z], this.latestParams.position)) {
@@ -261,7 +247,6 @@ export default class TerrainGenerator {
           chunkedPosition,
           renderDistance,
           unrenderOffset,
-          preloadOffset,
         })
       }
     }
