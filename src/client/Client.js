@@ -18,7 +18,7 @@ export default class Client {
   constructor({ container }) {
     this.stats = new Stats()
 
-    this.renderer = createRenderer({ container, clearColor: '#212121' })
+    this.renderer = createRenderer({ container, ...settingsStore.game.renderer })
 
     this.camera = createCamera({
       container,
@@ -26,15 +26,7 @@ export default class Client {
     })
     controls.initializeControls(this.camera)
 
-    this.scene = createScene({
-      fog: {
-        near: 0,
-        far: settingsStore.game.render.renderDistance * settingsStore.game.map.chunkSize * 3,
-      },
-      helpers: {
-        axes: 5,
-      },
-    })
+    this.scene = createScene(settingsStore.game.scene)
 
     this.generator = new TerrainGenerator(toJS(settingsStore.game.map))
 

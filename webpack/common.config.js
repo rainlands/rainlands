@@ -24,6 +24,14 @@ module.exports = {
         exclude: /node_modules/,
         use: 'worker-loader',
       },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
     ],
   },
   plugins: [

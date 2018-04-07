@@ -51,9 +51,13 @@ export default class TerrainGenerator {
 
   _startQueue(interval) {
     setInterval(() => {
-      const { chunkedPosition, projectionMatrix } = this.latestParams
+      const { chunkedPosition, projectionMatrix, renderDistance } = this.latestParams
 
       this.frustum.setFromMatrix(projectionMatrix)
+
+      // this.unsent = this.unsent
+      //   .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
+      //   .reverse()
 
       this.unsent = this.unsent
         .sort((a, b) => {
@@ -78,6 +82,17 @@ export default class TerrainGenerator {
 
       for (let i = 0; i < this.unsent.length; i++) {
         const chunk = this.unsent[i]
+
+        if (
+          !this.frustum.containsPoint(new THREE.Vector3(
+            chunk.position[0] * this.chunkSize,
+            chunk.height + 10,
+            chunk.position[1] * this.chunkSize
+          ))
+          && euc(chunk.position, chunkedPosition) > renderDistance / 3
+        ) {
+          continue
+        }
 
         if (this._isChunkNeeded(chunk.position)) {
           this._callOnUpdate({

@@ -1,13 +1,12 @@
 import * as THREE from 'three'
 import { chunk as lodashChunk } from 'lodash'
 import isBlockHidden from '@client/utils/isBlockHidden'
+import { loadMaterials } from './materials'
 
 
 const CHUNKS_MAP = {}
 const CUBE_MESH = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
-const CUBE_MATERIAL = new THREE.MeshLambertMaterial({
-  color: 'green',
-})
+const CUBE_MATERIAL = loadMaterials(1)
 
 export const renderChunk = ({
   chunk: { position, data, height },

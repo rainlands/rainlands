@@ -17,8 +17,21 @@ export default class SettingsStore {
           position: [0, 200, 0],
         },
         render: {
-          renderDistance: 10,
+          renderDistance: 5,
           unrenderOffset: 2,
+        },
+        renderer: {
+          clearColor: '#EDEDF2',
+        },
+        scene: {
+          fog: {
+            color: '#EDEDF2',
+            near: 5 / 3 * 16,
+            far: 5 * 16,
+          },
+          helpers: {
+            axes: 5,
+          },
         },
         map: {
           seed: Math.random() * 1000,

@@ -23,7 +23,8 @@
           "@ui": "./src/ui",
           "@client": "./src/client",
           "@server": "./src/server",
-          "@packages": "./src/packages"
+          "@packages": "./src/packages",
+          "@resources": "./src/resources"
         }
       }
     ]
