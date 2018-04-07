@@ -37,7 +37,7 @@ export default class SettingsStore {
           seed: Math.random() * 1000,
           chunkDepth: 256,
           chunkSize: 16,
-          updateInterval: 100,
+          updateInterval: 300,
           caves: {
             frequency: [100, 50, 100],
             redistribution: 0.5,
