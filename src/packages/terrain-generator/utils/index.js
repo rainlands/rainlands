@@ -1,12 +1,9 @@
 import WebworkerPromise from 'webworker-promise'
 
+import UtilsWorker from './utils.worker'
 
-const workers = [
-  new WebworkerPromise(new Worker('utils.worker.js')),
-  new WebworkerPromise(new Worker('utils.worker.js')),
-  new WebworkerPromise(new Worker('utils.worker.js')),
-  new WebworkerPromise(new Worker('utils.worker.js')),
-]
+
+const workers = [new WebworkerPromise(new UtilsWorker()), new WebworkerPromise(new UtilsWorker())]
 
 // import WorkerPool from 'webworker-promise/lib/pool'
 //
@@ -21,7 +18,7 @@ let index = 0
 const getActiveWorker = () => {
   return workers[index]
 
-  if (index >= 3) {
+  if (index >= workers.length - 1) {
     index = 0
   }
   else {

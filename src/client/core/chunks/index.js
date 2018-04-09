@@ -3,8 +3,10 @@ import uuid from 'uuid/v4'
 import WebworkerPromise from 'webworker-promise'
 import { loadMaterials } from './materials'
 
+import ChunksWorker from './chunks.worker'
 
-const chunksWorker = new WebworkerPromise(new Worker('chunks.worker.js'))
+
+const chunksWorker = new WebworkerPromise(new ChunksWorker())
 const jsonLoader = new THREE.JSONLoader()
 
 const CHUNKS_MAP = {}
