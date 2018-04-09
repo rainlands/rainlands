@@ -10,15 +10,17 @@ export default class SettingsStore {
       },
       game: {
         player: {
-          speed: 0.1,
-          fow: 45,
-          near: 0.3,
+          speed: 0.12,
+          fow: 70,
+          near: 0.1,
           far: 1000,
           position: [0, 200, 0],
         },
         render: {
           renderDistance: 10,
-          unrenderOffset: 5,
+          unrenderOffset: 2,
+          useFrustrum: true,
+          useDistanceTimeout: true,
         },
         renderer: {
           clearColor: '#EDEDF2',
@@ -26,8 +28,8 @@ export default class SettingsStore {
         scene: {
           fog: {
             color: '#EDEDF2',
-            near: 10 / 3 * 16,
-            far: 10 * 16,
+            near: 8 * 16,
+            far: 18 * 16,
           },
           helpers: {
             axes: 5,
@@ -45,12 +47,12 @@ export default class SettingsStore {
             octavesCoef: 0.7,
           },
           surface: {
-            frequency: [500, 500],
-            redistribution: 1,
-            octaves: 6,
+            frequency: [150, 150],
+            redistribution: 4,
+            octaves: 3,
             octavesCoef: 0.5,
             minHeight: 100,
-            maxHeight: 250,
+            maxHeight: 200,
           },
         },
       },

@@ -385,10 +385,10 @@ class Noise {
     // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
     // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
     // c = (3-sqrt(3))/6
-    const x1 = x0 - i1 + G2 // Offsets for middle corner in (x,y) unskewed coords
-    const y1 = y0 - j1 + G2
-    const x2 = x0 - 1 + 2 * G2 // Offsets for last corner in (x,y) unskewed coords
-    const y2 = y0 - 1 + 2 * G2
+    const x1 = x0 - i1 + this.G2 // Offsets for middle corner in (x,y) unskewed coords
+    const y1 = y0 - j1 + this.G2
+    const x2 = x0 - 1 + 2 * this.G2 // Offsets for last corner in (x,y) unskewed coords
+    const y2 = y0 - 1 + 2 * this.G2
 
     // Work out the hashed gradient indices of the three simplex corners
     i &= 255
