@@ -50,10 +50,18 @@ export default class TerrainGenerator {
   }
 
   _startQueue(interval) {
-    setInterval(() => {
-      const { chunkedPosition, projectionMatrix, renderDistance } = this.latestParams
+    const update = () => {
+      const {
+        chunkedPosition,
+        projectionMatrix,
+        renderDistance,
+        useFrustrum,
+        useDistanceTimeout,
+      } = this.latestParams
 
-      this.frustum.setFromMatrix(projectionMatrix)
+      if (useFrustrum) {
+        this.frustum.setFromMatrix(projectionMatrix)
+      }
 
       // this.unsent = this.unsent
       //   .sort((a, b) => euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition))
@@ -61,22 +69,25 @@ export default class TerrainGenerator {
 
       this.unsent = this.unsent
         .sort((a, b) => {
-          const visibleA = this.frustum.containsPoint(new THREE.Vector3(
-            a.position[0] * this.chunkSize,
-            a.height,
-            a.position[1] * this.chunkSize
-          ))
+          if (useFrustrum) {
+            const visibleA = this.frustum.containsPoint(new THREE.Vector3(
+              a.position[0] * this.chunkSize,
+              a.height,
+              a.position[1] * this.chunkSize
+            ))
 
-          const visibleB = this.frustum.containsPoint(new THREE.Vector3(
-            b.position[0] * this.chunkSize,
-            b.height,
-            b.position[1] * this.chunkSize
-          ))
+            const visibleB = this.frustum.containsPoint(new THREE.Vector3(
+              b.position[0] * this.chunkSize,
+              b.height,
+              b.position[1] * this.chunkSize
+            ))
 
-          if ((visibleA && visibleB) || (!visibleA && !visibleB)) {
-            return euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition)
+            if ((visibleA && visibleB) || (!visibleA && !visibleB)) {
+              return euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition)
+            }
+            return visibleA
           }
-          return true
+          return euc(b.position, chunkedPosition) > euc(a.position, chunkedPosition)
         })
         .reverse()
 
@@ -84,7 +95,8 @@ export default class TerrainGenerator {
         const chunk = this.unsent[i]
 
         if (
-          !this.frustum.containsPoint(new THREE.Vector3(
+          useFrustrum
+          && !this.frustum.containsPoint(new THREE.Vector3(
             chunk.position[0] * this.chunkSize,
             chunk.height + 10,
             chunk.position[1] * this.chunkSize
@@ -124,7 +136,22 @@ export default class TerrainGenerator {
           break
         }
       }
-    }, interval)
+
+      let timeout
+
+      if (this.unsent.length > 0) {
+        timeout = euc(this.unsent[0].position, chunkedPosition) / 3 * interval
+      }
+      else {
+        timeout = interval * 10
+      }
+
+      setTimeout(() => {
+        update()
+      }, useDistanceTimeout ? timeout : interval)
+    }
+
+    update()
   }
 
   _isChunkNeeded(chunkPosition) {
