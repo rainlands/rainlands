@@ -6,6 +6,21 @@ importScripts('noise.js')
 
 let noise
 
+const adjustBiomeSettings = (biome, params) => {
+  if (biome.biome === 1) {
+    return Object.assign({}, params, {
+      minHeight: params.minHeight - biome.frequency * 2,
+    })
+  }
+  else if (biome.biome === 2) {
+    return Object.assign({}, params, {
+      minHeight: params.minHeight + biome.frequency * 2,
+      redistribution: params.redistribution + biome.frequency / 4,
+    })
+  }
+  return params
+}
+
 const genSurfacePoint = (
   position,
   { frequency, redistribution, octaves, octavesCoef, minHeight, maxHeight }

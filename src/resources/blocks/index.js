@@ -1,5 +1,5 @@
 export default {
-  0: {
+  3: {
     name: 'Stone',
     texture: require('./textures/stone.png'),
   },
@@ -12,20 +12,12 @@ export default {
       },
     },
   },
-  2: {
+  4: {
     name: 'Sand',
     texture: require('./textures/sand.png'),
   },
-  3: {
-    name: 'Grass Path',
-    texture: require('./textures/grass_path_top.png'),
-  },
-  4: {
-    name: 'Snow',
-    texture: require('./textures/snow.png'),
-  },
-  5: {
-    name: 'Podzol',
-    texture: require('./textures/dirt_podzol_top.png'),
+  2: {
+    name: 'Water',
+    texture: require('./textures/water_still.png'),
   },
 }

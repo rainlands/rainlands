@@ -1,78 +1,60 @@
 import * as THREE from 'three'
-import { chunk as lodashChunk } from 'lodash'
-import isBlockHidden from '@client/utils/isBlockHidden'
+import uuid from 'uuid/v4'
+import WebworkerPromise from 'webworker-promise'
 import { loadMaterials } from './materials'
 
 
+const chunksWorker = new WebworkerPromise(new Worker('chunks.worker.js'))
+const jsonLoader = new THREE.JSONLoader()
+
 const CHUNKS_MAP = {}
 const CUBE_MESH = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
-const CUBE_MATERIAL = loadMaterials(1)
 
 const asyncTimeout = (t) => new Promise((resolve) => setTimeout(resolve, t))
 
-export const renderChunk = async ({
-  chunk: { position, data, height },
-  chunkDepth,
-  chunkSize,
-  scene,
-}) => {
-  const geometry = new THREE.Geometry()
-  const chunked = lodashChunk(lodashChunk(data, chunkDepth), chunkSize)
+export const renderChunk = async ({ scene, ...payload }) => {
+  const layers = await chunksWorker.postMessage(payload)
+  const [i, j] = payload.chunk.position
 
-  const [i, j] = position
+  Object.keys(layers).forEach((block, index) => {
+    const { geometry } = jsonLoader.parse(layers[block])
 
-  for (let x = 0; x < chunked.length; x++) {
-    await asyncTimeout(1)
-    for (let z = 0; z < chunked[x].length; z++) {
-      for (let y = 0; y <= height; y++) {
-        if (
-          !isBlockHidden({
-            map: chunked,
-            position: [x, y, z],
-            chunkSize,
-          })
-        ) {
-          const block = chunked[x][z][y]
+    const mesh = new THREE.Mesh(
+      new THREE.BufferGeometry().fromGeometry(geometry),
+      loadMaterials(block)
+    )
+    const id = uuid()
 
-          if (block > 0) {
-            CUBE_MESH.position.set(x + chunkSize * i - 8, y, z + chunkSize * j - 8)
-            CUBE_MESH.updateMatrix()
-            geometry.merge(CUBE_MESH.geometry, CUBE_MESH.matrix)
-          }
-        }
+    mesh.name = id
+
+    if (!CHUNKS_MAP[i]) CHUNKS_MAP[i] = {}
+    if (!CHUNKS_MAP[i][j]) CHUNKS_MAP[i][j] = []
+    CHUNKS_MAP[i][j].push(id)
+
+    setTimeout(() => {
+      if (CHUNKS_MAP[i] && CHUNKS_MAP[i][j]) {
+        scene.add(mesh)
       }
-    }
-  }
-
-  const id = Date.now()
-  const mesh = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(geometry), CUBE_MATERIAL)
-
-  if (!CHUNKS_MAP[i]) CHUNKS_MAP[i] = {}
-  CHUNKS_MAP[i][j] = id
-
-  setTimeout(() => {
-    if (CHUNKS_MAP[i] && CHUNKS_MAP[i][j]) {
-      mesh.name = id
-
-      scene.add(mesh)
-    }
-  }, 100)
+    }, 200 * index)
+  })
 }
 
 export const removeChunk = ({ chunk: { position }, scene }) => {
   const [i, j] = position
 
   setTimeout(() => {
-    if (CHUNKS_MAP[i]) {
-      const chunkID = CHUNKS_MAP[i][j]
+    if (CHUNKS_MAP[i] && CHUNKS_MAP[i][j]) {
+      const chunksID = CHUNKS_MAP[i][j]
+
+      chunksID.forEach((id) => {
+        const chunk = scene.getObjectByName(id)
+
+        if (chunk) {
+          scene.remove(chunk)
+        }
+      })
 
       delete CHUNKS_MAP[i][j]
-
-      const chunk = scene.getObjectByName(chunkID)
-
-      if (chunk) {
-        scene.remove(chunk)
-      }
     }
   }, 100)
 }

@@ -4,7 +4,7 @@ import * as THREE from 'three'
 export const createRenderer = ({ container, clearColor = '#212121' }) => {
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
-    antialias: true,
+    // antialias: true,
   })
 
   renderer.setClearColor(clearColor, 1)

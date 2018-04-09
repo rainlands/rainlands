@@ -10,17 +10,17 @@ export default class SettingsStore {
       },
       game: {
         player: {
-          speed: 1,
+          speed: 0.12,
           fow: 70,
           near: 0.1,
           far: 1000,
           position: [0, 200, 0],
         },
         render: {
-          renderDistance: 12,
-          unrenderOffset: 3,
-          useFrustrum: false,
-          useDistanceTimeout: false,
+          renderDistance: 10,
+          unrenderOffset: 2,
+          useFrustrum: true,
+          useDistanceTimeout: true,
         },
         renderer: {
           clearColor: '#EDEDF2',
@@ -29,7 +29,7 @@ export default class SettingsStore {
           fog: {
             color: '#EDEDF2',
             near: 8 * 16,
-            far: 12 * 16,
+            far: 18 * 16,
           },
           helpers: {
             axes: 5,
