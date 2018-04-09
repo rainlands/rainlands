@@ -29,9 +29,20 @@ const renderChunk = ({ chunk: { position, data, height }, chunkDepth, chunkSize 
               layers[block] = new THREE.Geometry()
             }
 
-            CUBE_MESH.position.set(x + chunkSize * i - 8, y, z + chunkSize * j - 8)
+            const translationX = x + chunkSize * i - 8
+            const translationY = y
+            const translationZ = z + chunkSize * j - 8
+
+            CUBE_MESH.translateX(translationX)
+            CUBE_MESH.translateY(translationY)
+            CUBE_MESH.translateZ(translationZ)
+
             CUBE_MESH.updateMatrix()
             layers[block].merge(CUBE_MESH.geometry, CUBE_MESH.matrix)
+
+            CUBE_MESH.translateX(-translationX)
+            CUBE_MESH.translateY(-translationY)
+            CUBE_MESH.translateZ(-translationZ)
           }
         }
       }

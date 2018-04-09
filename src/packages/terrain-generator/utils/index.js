@@ -3,7 +3,7 @@ import WebworkerPromise from 'webworker-promise'
 import UtilsWorker from './utils.worker'
 
 
-const workers = [new WebworkerPromise(new UtilsWorker()), new WebworkerPromise(new UtilsWorker())]
+const workers = [new WebworkerPromise(new UtilsWorker())]
 
 // import WorkerPool from 'webworker-promise/lib/pool'
 //

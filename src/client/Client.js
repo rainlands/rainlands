@@ -58,18 +58,24 @@ export default class Client {
 
   updateMap({ added, removed }) {
     if (added) {
-      renderChunk({
-        chunk: added,
-        scene: this.scene,
-        ...settingsStore.game.map,
-      })
+      renderChunk(
+        {
+          chunk: added,
+          scene: this.scene,
+          ...settingsStore.game.map,
+        },
+        settingsStore.game.chunksRenderer
+      )
     }
 
     if (removed) {
-      removeChunk({
-        chunk: removed,
-        scene: this.scene,
-      })
+      removeChunk(
+        {
+          chunk: removed,
+          scene: this.scene,
+        },
+        settingsStore.game.chunksRenderer
+      )
     }
   }
 }

@@ -14,7 +14,7 @@ const CUBE_MESH = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
 
 const asyncTimeout = (t) => new Promise((resolve) => setTimeout(resolve, t))
 
-export const renderChunk = async ({ scene, ...payload }) => {
+export const renderChunk = async ({ scene, ...payload }, settings) => {
   const layers = await chunksWorker.postMessage(payload)
   const [i, j] = payload.chunk.position
 
@@ -33,9 +33,24 @@ export const renderChunk = async ({ scene, ...payload }) => {
     if (!CHUNKS_MAP[i][j]) CHUNKS_MAP[i][j] = []
     CHUNKS_MAP[i][j].push(id)
 
+    if (settings.smoothChunksAppear) {
+      mesh.material.transparent = true
+      mesh.material.opacity = 0
+    }
+
     setTimeout(() => {
       if (CHUNKS_MAP[i] && CHUNKS_MAP[i][j]) {
         scene.add(mesh)
+      }
+
+      if (settings.smoothChunksAppear) {
+        for (let i = 0; i < 20; i++) {
+          setTimeout(() => {
+            const chunk = scene.getObjectByName(id)
+
+            chunk.material.opacity += 0.05
+          }, 25 * i)
+        }
       }
     }, 200 * index)
   })

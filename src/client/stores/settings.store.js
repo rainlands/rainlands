@@ -18,12 +18,15 @@ export default class SettingsStore {
         },
         render: {
           renderDistance: 10,
-          unrenderOffset: 2,
+          unrenderOffset: 5,
           useFrustrum: true,
           useDistanceTimeout: true,
         },
         renderer: {
           clearColor: '#EDEDF2',
+        },
+        chunksRenderer: {
+          smoothChunksAppear: true,
         },
         scene: {
           fog: {
@@ -40,6 +43,7 @@ export default class SettingsStore {
           chunkDepth: 256,
           chunkSize: 16,
           updateInterval: 20,
+          smoothChunksAppear: true,
           caves: {
             frequency: [100, 50, 100],
             redistribution: 0.5,
