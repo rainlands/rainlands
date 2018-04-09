@@ -12,12 +12,13 @@
     "deploy": "yarn build && firebase deploy"
   },
   "lint-staged": {
-    "*.{js,json,css,md}": ["yarn lint", "git add"]
+    "*.{js,jsx,json,css,md}": ["yarn lint", "git add"]
   },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
+    "euclidean-distance": "^1.0.0",
     "lodash": "^4.17.5",
     "microcache": "^1.0.0",
     "mobx": "^4.1.1",
@@ -31,7 +32,7 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "recompose": "^0.26.0",
-    "stats-js": "^1.0.0-alpha1",
+    "stats.js": "^0.17.0",
     "styled-components": "^3.2.5",
     "three": "^0.90.0",
     "uuid": "^3.2.1",

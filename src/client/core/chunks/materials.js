@@ -7,41 +7,27 @@ import blocks from '@resources/blocks'
 const TextureLoader = new THREE.TextureLoader()
 const microCache = new MicroCache()
 
-export const loadMaterials = (blockID) => {
-  let result
-  let block = blocks[blockID]
+const loadTexture = ({ url, material: materialOptions } = {}) => {
+  const material = new THREE.MeshLambertMaterial(materialOptions)
+  // material.blending = THREE.CustomBlending
+  // material.blendSrc = THREE.OneFactor
+  // material.blendDst = THREE.OneMinusSrcAlphaFactor
 
-  if (!block) {
-    if (blockID > Math.max(...Object.keys(blocks))) {
-      block = blocks[Math.max(...Object.keys(blocks))]
-    }
-    else {
-      block = blocks[Math.min(...Object.keys(blocks))]
-    }
-  }
+  const texture = microCache.getSet(url, TextureLoader.load(url))
+
+  texture.magFilter = THREE.NearestFilter
+  texture.minFilter = THREE.LinearMipMapLinearFilter
+
+  material.map = texture
+
+  return material
+}
+
+export const loadMaterials = (blockID) => {
+  const block = blocks[blockID]
 
   if (Array.isArray(block.texture)) {
-    const textures = microCache.getSet(
-      block.name,
-      block.texture.map((texture) => TextureLoader.load(texture.url ? texture.url : texture))
-    )
-
-    result = block.texture.map((_, i) => {
-      const material = new THREE.MeshLambertMaterial(block.texture[i].options)
-
-      material.map = textures[i]
-
-      return material
-    })
+    return block.texture.map((t) => loadTexture(t))
   }
-  if (typeof block.texture === 'object') {
-    result = new THREE.MeshLambertMaterial(block.texture.options)
-    result.map = microCache.getSet(block.name, new THREE.TextureLoader().load(block.texture.url))
-  }
-  else {
-    result = new THREE.MeshLambertMaterial()
-    result.map = microCache.getSet(block.name, new THREE.TextureLoader().load(block.texture))
-  }
-
-  return result
+  return loadTexture(block.texture)
 }

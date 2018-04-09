@@ -1,18 +1,13 @@
-import Statsjs from 'stats-js'
+import Statsjs from 'stats.js'
 
 
 export default class Stats {
   constructor() {
     const stats = new Statsjs()
 
-    stats.setMode(0)
+    stats.showPanel(0)
 
-    stats.domElement.style.position = 'absolute'
-    stats.domElement.style.right = '0px'
-    stats.domElement.style.top = '0px'
-    stats.domElement.style.zIndex = '5'
-
-    document.body.appendChild(stats.domElement)
+    document.body.appendChild(stats.dom)
 
     this.stats = stats
   }
